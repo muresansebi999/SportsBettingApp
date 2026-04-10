@@ -1,0 +1,127 @@
+/* Containerul Principal - Ocupă TOT ecranul fără margini */
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    width: 100vw;
+    /* Gradient Roșu Sportiv */
+    background: radial-gradient(circle, #b91d1d 0%, #7f1d1d 100%);
+    margin: 0;
+    padding: 0;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    position: fixed;
+    top: 0;
+    left: 0;
+  }
+  
+  /* Cardul de Login */
+  .login-card {
+    background: #ffffff;
+    padding: 2.5rem;
+    border-radius: 20px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+    width: 90%;
+    max-width: 400px;
+    text-align: center;
+  }
+  
+  .logo-section h1 {
+    color: #b91d1d; /* Roșu principal */
+    margin: 0;
+    font-size: 2.5rem;
+    font-weight: 800;
+    letter-spacing: -1px;
+  }
+  
+  .logo-section p {
+    color: #4b5563;
+    margin-top: 5px;
+    margin-bottom: 30px;
+    font-weight: 500;
+  }
+  
+  /* Stiluri Formular */
+  .input-group {
+    text-align: left;
+    margin-bottom: 1.5rem;
+  }
+  
+  .input-group label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 700;
+    margin-bottom: 6px;
+    color: #1f2937;
+    text-transform: uppercase;
+  }
+  
+  .input-group input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
+    font-size: 1rem;
+    transition: all 0.2s ease;
+    box-sizing: border-box;
+  }
+  
+  .input-group input:focus {
+    outline: none;
+    border-color: #ef4444; /* Roșu la focus */
+    box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.1);
+  }
+  
+  /* Butoane */
+  .login-btn {
+    width: 100%;
+    padding: 14px;
+    background-color: #b91d1d;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px -1px rgba(185, 29, 29, 0.2);
+  }
+  
+  .login-btn:hover {
+    background-color: #991b1b;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px -3px rgba(185, 29, 29, 0.3);
+  }
+  
+  .divider {
+    margin: 20px 0;
+    color: #9ca3af;
+    font-size: 0.8rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+  }
+  
+  .divider::before, .divider::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: #e5e7eb;
+    margin: 0 10px;
+  }
+  
+  .register-btn {
+    width: 100%;
+    padding: 12px;
+    background: white;
+    color: #b91d1d;
+    border: 2px solid #b91d1d;
+    border-radius: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  
+  .register-btn:hover {
+    background-color: #fef2f2;
+  }

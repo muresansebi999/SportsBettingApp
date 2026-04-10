@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "RTSpIMgM91ryIhxKpbWQIKE286lA0zIp3kJ72Fkj05o=",
+  "Source": "BettingApp.API",
+  "BasePath": "_content/BettingApp.API",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}
