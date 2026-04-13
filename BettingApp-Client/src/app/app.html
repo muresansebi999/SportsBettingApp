@@ -1,44 +1,44 @@
-<div class="login-container">
-  <div class="login-card">
-    <div class="logo-section">
-      <h1>Pisicile salbatice</h1>
-      <p>Cea mai tare platformă de pariere</p>
-    </div>
-
-    <form #loginForm="ngForm" (ngSubmit)="login()" autocomplete="off">
-      <div class="input-group">
-        <label for="username">Utilizator</label>
-        <input 
-          type="text" 
-          id="username"
-          name="username" 
-          [(ngModel)]="model.username" 
-          placeholder="Introdu username-ul"
-          required>
-      </div>
-
-      <div class="input-group">
-        <label for="password">Parolă</label>
-        <input 
-          type="password" 
-          id="password"
-          name="password" 
-          [(ngModel)]="model.password" 
-          placeholder="Introdu parola"
-          required>
-      </div>
-
-      <button type="submit" class="login-btn">
-        Autentificare
-      </button>
-
-      <div class="divider">sau</div>
-
-      <button type="button" class="register-btn">
-        Creează cont nou
-      </button>
-    </form>
+<div *ngIf="currentUser" class="success-screen">
+  <div class="welcome-box">
+    <h1>Salut, {{currentUser.username}}!</h1>
+    <p>Te-ai logat cu succes pe platforma Pisicile Sălbatice.</p>
+    <button (click)="logout()" class="logout-btn">Ieși din cont</button>
   </div>
 </div>
 
-<router-outlet />
+<div *ngIf="!currentUser" class="login-container">
+  <div class="login-card">
+    <h1>Pisicile Sălbatice</h1>
+    <h3>{{ registerMode ? 'Creează Cont' : 'Autentificare' }}</h3>
+
+    <form autocomplete="off" (submit)="$event.preventDefault()" (ngSubmit)="submitForm(authForm)" #authForm="ngForm">
+      <input type="text" name="username" [(ngModel)]="model.username" #username="ngModel" placeholder="Utilizator" required minlength="3">
+      <small class="val-error" *ngIf="authForm.submitted && username.invalid">Numele de utilizator este necesar (minim 3 caractere).</small>
+      
+      <div *ngIf="registerMode">
+        <input type="text" name="firstName" [(ngModel)]="model.firstName" #firstName="ngModel" placeholder="Prenume" [required]="registerMode">
+        <small class="val-error" *ngIf="authForm.submitted && firstName.invalid">Prenumele este necesar.</small>
+
+        <input type="text" name="lastName" [(ngModel)]="model.lastName" #lastName="ngModel" placeholder="Nume" [required]="registerMode">
+        <small class="val-error" *ngIf="authForm.submitted && lastName.invalid">Numele este necesar.</small>
+
+        <input type="email" name="email" [(ngModel)]="model.email" #email="ngModel" placeholder="Email" [required]="registerMode" email>
+        <small class="val-error" *ngIf="authForm.submitted && email.invalid">Un email valid este necesar.</small>
+
+        <input type="date" name="dateOfBirth" [(ngModel)]="model.dateOfBirth" #dateOfBirth="ngModel" [required]="registerMode">
+        <small class="val-error" *ngIf="authForm.submitted && dateOfBirth.invalid">Data de naștere este necesară.</small>
+      </div>
+
+      <input type="password" name="password" [(ngModel)]="model.password" #password="ngModel" placeholder="Parolă" required minlength="4">
+      <small class="val-error" *ngIf="authForm.submitted && password.invalid">Parola rebuie să aibă minim 4 caractere.</small>
+
+      <button type="submit" class="btn-main">
+        {{ registerMode ? 'Înregistrare' : 'Intră în cont' }}
+      </button>
+    </form>
+
+    <p (click)="registerToggle()" class="toggle-link">
+      {{ registerMode ? 'Ai deja cont? Login' : 'Nu ai cont? Înregistrează-te' }}
+    </p>
+  </div>
+</div>

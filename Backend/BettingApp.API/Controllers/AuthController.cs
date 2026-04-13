@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using BettingApp.API.Data; // Asigură-te că acesta este namespace-ul tău pentru DataContext
-using BettingApp.API.Models; // Asigură-te că acesta este namespace-ul tău pentru User
-using BettingApp.API.Dtos; // Litera mică aici!
+using BettingApp.API.Data; 
+using BettingApp.API.Models; 
+using BettingApp.API.Dtos; 
 
 namespace BettingApp.API.Controllers
 {
@@ -20,9 +20,14 @@ namespace BettingApp.API.Controllers
         [HttpPost("register")]
         public async Task<ActionResult<User>> Register(RegisterDto registerDto)
         {
-            // Verificăm dacă user-ul există deja
             if (await _context.Users.AnyAsync(x => x.Username == registerDto.Username.ToLower()))
-                return BadRequest("Username is taken");
+                return Conflict("Username is taken");
+
+            var today = DateTime.Today;
+            var age = today.Year - registerDto.DateOfBirth.Year;
+            if (registerDto.DateOfBirth.Date > today.AddYears(-age)) age--;
+
+            if (age < 18) return Unauthorized("Trebuie să ai minim 18 ani pentru a te înregistra.");
 
             using var hmac = new System.Security.Cryptography.HMACSHA512();
 
@@ -30,6 +35,10 @@ namespace BettingApp.API.Controllers
             {
                 Username = registerDto.Username.ToLower(),
                 Email = registerDto.Email,
+                FirstName = registerDto.FirstName,
+                LastName = registerDto.LastName,
+                DateOfBirth = registerDto.DateOfBirth,
+                
                 PasswordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(registerDto.Password)),
                 PasswordSalt = hmac.Key,
                 Balance = 100.00m,
@@ -42,7 +51,6 @@ namespace BettingApp.API.Controllers
             return user;
         }
 
-        
         [HttpPost("login")]
         public async Task<ActionResult<User>> Login(LoginDto loginDto)
         {
