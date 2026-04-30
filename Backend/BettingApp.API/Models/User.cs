@@ -12,4 +12,5 @@ namespace BettingApp.API.Models {
         public decimal Balance { get; set; } = 0.00m;
         public DateTime CreatedAt { get; set; } = DateTime.Now;
     }
+    
 }
