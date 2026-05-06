@@ -1,11 +1,13 @@
-<!-- Bara ta existentă -->
 <div class="hotbar-container">
-  <div class="logo">Pisicile Sălbatice</div>
+  <div class="logo">
+    Pisicile Sălbatice
+  </div>
 
   <div class="user-actions">
-    <div class="balance">{{ balance | currency:'USD':'symbol' }}</div>
+    <div class="balance">
+      {{ balance | currency:'USD':'symbol' }}
+    </div>
     
-    <!-- Acum butonul nu mai trimite bani direct, ci doar deschide fereastra -->
     <button class="btn-deposit" (click)="openModal()">
       Deposit
     </button>
@@ -16,8 +18,7 @@
   </div>
 </div>
 
-<!-- Noul nostru ecran de depunere (Meniul) -->
-<!-- Se afișează doar dacă showDepositModal este TRUE -->
+<!-- Meniul Modal de Depunere -->
 <div class="modal-overlay" *ngIf="showDepositModal">
   <div class="modal-content">
     
@@ -38,4 +39,9 @@
     </div>
 
   </div>
+</div>
+
+<!-- BARA ALBĂ CUSTOM (Toast Notification) -->
+<div class="toast-notification" [class.show]="showToast">
+  {{ toastMessage }}
 </div>
