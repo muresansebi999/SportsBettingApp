@@ -1,0 +1,41 @@
+<!-- Bara ta existentă -->
+<div class="hotbar-container">
+  <div class="logo">Pisicile Sălbatice</div>
+
+  <div class="user-actions">
+    <div class="balance">{{ balance | currency:'USD':'symbol' }}</div>
+    
+    <!-- Acum butonul nu mai trimite bani direct, ci doar deschide fereastra -->
+    <button class="btn-deposit" (click)="openModal()">
+      Deposit
+    </button>
+    
+    <div class="profile-icon">
+      {{ username ? username.charAt(0).toUpperCase() : 'U' }}
+    </div>
+  </div>
+</div>
+
+<!-- Noul nostru ecran de depunere (Meniul) -->
+<!-- Se afișează doar dacă showDepositModal este TRUE -->
+<div class="modal-overlay" *ngIf="showDepositModal">
+  <div class="modal-content">
+    
+    <div class="modal-header">
+      <h2>Depunere Fonduri</h2>
+      <button class="close-btn" (click)="closeModal()">✕</button>
+    </div>
+    
+    <p class="modal-text">Selectează suma pe care dorești să o adaugi în cont:</p>
+    
+    <div class="amount-grid">
+      <button class="amount-btn" (click)="confirmDeposit(10)">$10</button>
+      <button class="amount-btn" (click)="confirmDeposit(25)">$25</button>
+      <button class="amount-btn" (click)="confirmDeposit(100)">$100</button>
+      <button class="amount-btn" (click)="confirmDeposit(200)">$200</button>
+      <button class="amount-btn" (click)="confirmDeposit(500)">$500</button>
+      <button class="amount-btn" (click)="confirmDeposit(1000)">$1000</button>
+    </div>
+
+  </div>
+</div>
