@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core'; 
 import { CommonModule } from '@angular/common'; 
 import { HotbarService } from '../../services/hotbar';  
 
@@ -9,30 +9,36 @@ import { HotbarService } from '../../services/hotbar';
   templateUrl: './hotbar.html', 
   styleUrls: ['./hotbar.css']   
 })
-export class HotbarComponent implements OnInit {
+export class HotbarComponent implements OnInit, OnDestroy {
   username: string = '';
   balance: number = 0;
-  
-  // Această variabilă controlează dacă meniul e vizibil sau nu
   showDepositModal: boolean = false; 
+  private checkInterval: any; 
 
   constructor(private hotbarService: HotbarService) {}
 
   ngOnInit(): void {
-    this.loadUserInfo();
+    // Hotbar-ul se uită doar în memorie de 2 ori pe secundă.
+    // În secunda în care te-ai logat, datele sunt deja acolo grație ideii tale!
+    this.checkInterval = setInterval(() => {
+      const currentUser = this.hotbarService.getCurrentUser();
+      
+      if (currentUser) {
+        this.username = currentUser.username || currentUser.Username || 'U';
+        this.balance = currentUser.balance || currentUser.Balance || 0;
+      } else {
+        this.username = 'U';
+        this.balance = 0;
+      }
+    }, 500);
   }
 
-  loadUserInfo() {
-    this.hotbarService.getHotbarInfo().subscribe({
-      next: (data: any) => {
-        this.username = data.username;
-        this.balance = data.balance;
-      },
-      error: (err: any) => console.error('Eroare la încărcarea datelor.', err)
-    });
+  ngOnDestroy(): void {
+    if (this.checkInterval) {
+      clearInterval(this.checkInterval);
+    }
   }
 
-  // Funcții pentru meniul nostru personalizat
   openModal() {
     this.showDepositModal = true;
   }
@@ -41,12 +47,20 @@ export class HotbarComponent implements OnInit {
     this.showDepositModal = false;
   }
 
-  // Se apelează când apeși pe un buton cu sumă (ex: $100)
   confirmDeposit(amount: number) {
     this.hotbarService.depositFunds(amount).subscribe({
       next: (response: any) => {
-        // Succes! Actualizăm banii și închidem fereastra
-        this.balance = response.newBalance; 
+        const newBal = response.newBalance || response.NewBalance;
+        
+        // Când depunem, actualizăm direct memoria browser-ului
+        // astfel încât "radarul" nostru să vadă noii bani instant!
+        const userStr = localStorage.getItem('user');
+        if (userStr) {
+          let userObj = JSON.parse(userStr);
+          userObj.balance = newBal;
+          localStorage.setItem('user', JSON.stringify(userObj));
+        }
+
         this.closeModal(); 
         alert(`Ai depus cu succes $${amount}!`);
       },

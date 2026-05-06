@@ -49,10 +49,12 @@ namespace BettingApp.API.Controllers
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
+            // Returnăm datele, inclusiv Balanța
             return new UserDto
             {
                 Username = user.Username,
-                Token = _tokenService.CreateToken(user)
+                Token = _tokenService.CreateToken(user),
+                Balance = user.Balance
             };
         }
 
@@ -68,10 +70,12 @@ namespace BettingApp.API.Controllers
             for (int i = 0; i < computedHash.Length; i++)
                 if (computedHash[i] != user.PasswordHash[i]) return Unauthorized("Invalid password");
 
+            // Returnăm datele, inclusiv Balanța
             return new UserDto
             {
                 Username = user.Username,
-                Token = _tokenService.CreateToken(user)
+                Token = _tokenService.CreateToken(user),
+                Balance = user.Balance
             };
         }
     }

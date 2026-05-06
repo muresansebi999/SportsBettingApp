@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("BettingApp.API")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a869a69259835d81711744e5dd77e86e3cbdab1f")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f865d0a05c60c5bf149ac902b6503e1afd14a277")]
 [assembly: System.Reflection.AssemblyProductAttribute("BettingApp.API")]
 [assembly: System.Reflection.AssemblyTitleAttribute("BettingApp.API")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
