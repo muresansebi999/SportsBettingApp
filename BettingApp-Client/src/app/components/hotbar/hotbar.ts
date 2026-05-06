@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core'; 
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core'; 
 import { CommonModule } from '@angular/common'; 
 import { HotbarService } from '../../services/hotbar';  
 
@@ -13,22 +13,38 @@ export class HotbarComponent implements OnInit, OnDestroy {
   username: string = '';
   balance: number = 0;
   showDepositModal: boolean = false; 
-  private checkInterval: any; 
+  
+  // Variabile pentru bara custom de succes
+  showToast: boolean = false;
+  toastMessage: string = '';
 
-  constructor(private hotbarService: HotbarService) {}
+  private checkInterval: any; 
+  private lastKnownUser: string = '';
+
+  // Am adăugat ChangeDetectorRef pentru a ne asigura că Angular actualizează interfața la timp
+  constructor(
+    private hotbarService: HotbarService,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   ngOnInit(): void {
-    // Hotbar-ul se uită doar în memorie de 2 ori pe secundă.
-    // În secunda în care te-ai logat, datele sunt deja acolo grație ideii tale!
+    this.loadUserInfo();
+
     this.checkInterval = setInterval(() => {
       const currentUser = this.hotbarService.getCurrentUser();
+      const actualName = currentUser ? (currentUser.username || currentUser.Username) : '';
       
-      if (currentUser) {
-        this.username = currentUser.username || currentUser.Username || 'U';
-        this.balance = currentUser.balance || currentUser.Balance || 0;
-      } else {
-        this.username = 'U';
-        this.balance = 0;
+      if (actualName !== this.lastKnownUser) {
+        this.lastKnownUser = actualName;
+        
+        if (actualName) {
+          this.loadUserInfo(); 
+        } else {
+          this.username = 'U';
+          this.balance = 0;
+        }
+        // Forțăm interfața să se actualizeze
+        this.cdr.detectChanges();
       }
     }, 500);
   }
@@ -39,6 +55,17 @@ export class HotbarComponent implements OnInit, OnDestroy {
     }
   }
 
+  loadUserInfo() {
+    this.hotbarService.getHotbarInfo().subscribe({
+      next: (data: any) => {
+        this.username = data.username || data.Username || 'U';
+        this.balance = data.balance || data.Balance || 0;
+        this.cdr.detectChanges();
+      },
+      error: (err: any) => console.error('Eroare la încărcarea datelor:', err)
+    });
+  }
+
   openModal() {
     this.showDepositModal = true;
   }
@@ -47,13 +74,25 @@ export class HotbarComponent implements OnInit, OnDestroy {
     this.showDepositModal = false;
   }
 
+  displaySuccessToast(message: string) {
+    this.toastMessage = message;
+    this.showToast = true;
+    this.cdr.detectChanges(); // Spunem lui Angular să arate bara imediat
+    
+    // După fix 2 secunde, o ascundem
+    setTimeout(() => {
+      this.showToast = false;
+      this.cdr.detectChanges(); // Spunem lui Angular să o ascundă
+    }, 2000); 
+  }
+
   confirmDeposit(amount: number) {
     this.hotbarService.depositFunds(amount).subscribe({
       next: (response: any) => {
         const newBal = response.newBalance || response.NewBalance;
         
-        // Când depunem, actualizăm direct memoria browser-ului
-        // astfel încât "radarul" nostru să vadă noii bani instant!
+        this.balance = newBal;
+        
         const userStr = localStorage.getItem('user');
         if (userStr) {
           let userObj = JSON.parse(userStr);
@@ -61,8 +100,14 @@ export class HotbarComponent implements OnInit, OnDestroy {
           localStorage.setItem('user', JSON.stringify(userObj));
         }
 
+        // 1. Închidem imediat meniul negru
         this.closeModal(); 
-        alert(`Ai depus cu succes $${amount}!`);
+        
+        // 2. Așteptăm o fracțiune de secundă (150ms) ca să se închidă meniul frumos, apoi afișăm bara albă
+        setTimeout(() => {
+          this.displaySuccessToast(`Depunere de $${amount} realizată cu succes!`);
+        }, 150);
+
       },
       error: (err: any) => {
         console.error('Eroare la depunere', err);

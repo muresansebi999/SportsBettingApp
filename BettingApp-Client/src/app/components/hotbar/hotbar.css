@@ -1,6 +1,4 @@
-/* =========================================
-   1. STILURI PENTRU BARA DE SUS (HOTBAR)
-   ========================================= */
+/* Bara de sus */
 .hotbar-container {
   display: flex;
   justify-content: space-between;
@@ -56,9 +54,7 @@
   border: 1px solid #555;
 }
 
-/* =========================================
-   2. STILURI PENTRU MENIUL DE DEPUNERE (MODAL)
-   ========================================= */
+/* Modalul (Meniul de depunere) */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -140,4 +136,33 @@
   background-color: #ff3b5c;
   border-color: #ff3b5c;
   transform: translateY(-2px);
+}
+
+/* =========================================
+   STILURI PENTRU BARA ALBĂ DE SUCCES
+   ========================================= */
+.toast-notification {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%) translateY(-30px); 
+  background-color: white;
+  color: #1a1a1a;
+  padding: 15px 30px;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+  z-index: 100000;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Fontul corect adăugat aici */
+}
+
+/* Clasa adăugată din cod care face bara să apară */
+.toast-notification.show {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(0);
 }
