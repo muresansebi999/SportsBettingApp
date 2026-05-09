@@ -77,3 +77,9 @@
     display: block;
     margin-left: 5px;
   }
+  
+  .main-content {
+  background-color: #0f0f0f;
+  min-height: calc(100vh - 65px);
+  color: white;
+}

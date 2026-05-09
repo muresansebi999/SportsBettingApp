@@ -28,7 +28,7 @@
 }
 
 .btn-deposit {
-  background-color: #ff3b5c;
+  background-color: #6f057c;
   color: white;
   border: none;
   padding: 8px 20px;
@@ -39,7 +39,7 @@
 }
 
 .btn-deposit:hover {
-  background-color: #e02f4d;
+  background-color: #560142;
 }
 
 .profile-icon {
@@ -105,7 +105,7 @@
 }
 
 .close-btn:hover {
-  color: #ff3b5c;
+  color: #6f057c;
 }
 
 .modal-text {
@@ -133,8 +133,8 @@
 }
 
 .amount-btn:hover {
-  background-color: #ff3b5c;
-  border-color: #ff3b5c;
+  background-color: #6f057c;
+  border-color: #6f057c;
   transform: translateY(-2px);
 }
 
