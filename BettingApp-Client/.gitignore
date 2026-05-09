@@ -53,3 +53,7 @@ Backend/BettingApp.API/Properties/launchSettings.json
 *.db
 *.db-journal
 *.sqlite
+
+# --- Playwright ---
+playwright-report/
+test-results/

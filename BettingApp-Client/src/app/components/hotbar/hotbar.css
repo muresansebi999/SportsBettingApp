@@ -1,0 +1,168 @@
+/* Bara de sus */
+.hotbar-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #0f0f0f;
+  color: white;
+  padding: 15px 30px;
+  border-bottom: 1px solid #333;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.logo {
+  font-size: 1.2rem;
+  font-weight: bold;
+  letter-spacing: 2px;
+}
+
+.user-actions {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.balance {
+  font-size: 1.1rem;
+  font-weight: bold;
+}
+
+.btn-deposit {
+  background-color: #ff3b5c;
+  color: white;
+  border: none;
+  padding: 8px 20px;
+  border-radius: 5px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btn-deposit:hover {
+  background-color: #e02f4d;
+}
+
+.profile-icon {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  background-color: #333;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+  border: 1px solid #555;
+}
+
+/* Modalul (Meniul de depunere) */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.85); 
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10000; 
+  backdrop-filter: blur(5px);
+}
+
+.modal-content {
+  background-color: #1a1a1a; 
+  padding: 30px;
+  border-radius: 12px;
+  width: 450px;
+  color: white;
+  border: 1px solid #333;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  border-bottom: 1px solid #333;
+  padding-bottom: 15px;
+}
+
+.modal-header h2 {
+  margin: 0;
+  font-size: 1.4rem;
+  font-weight: 600;
+}
+
+.close-btn {
+  background: transparent;
+  color: #888;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.close-btn:hover {
+  color: #ff3b5c;
+}
+
+.modal-text {
+  color: #aaa;
+  margin-bottom: 25px;
+  text-align: center;
+}
+
+.amount-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+}
+
+.amount-btn {
+  background-color: #2a2a2a;
+  color: white;
+  border: 1px solid #444;
+  padding: 15px 0;
+  font-size: 1.2rem;
+  font-weight: bold;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.amount-btn:hover {
+  background-color: #ff3b5c;
+  border-color: #ff3b5c;
+  transform: translateY(-2px);
+}
+
+/* =========================================
+   STILURI PENTRU BARA ALBĂ DE SUCCES
+   ========================================= */
+.toast-notification {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%) translateY(-30px); 
+  background-color: white;
+  color: #1a1a1a;
+  padding: 15px 30px;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+  z-index: 100000;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Fontul corect adăugat aici */
+}
+
+/* Clasa adăugată din cod care face bara să apară */
+.toast-notification.show {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(0);
+}

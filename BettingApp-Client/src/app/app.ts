@@ -3,10 +3,14 @@ import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { FormsModule, NgForm } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
+// 1. Am adăugat importul către componenta ta Hotbar
+import { HotbarComponent } from './components/hotbar/hotbar'; 
+
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [FormsModule, CommonModule, HttpClientModule],
+  // 2. Am adăugat HotbarComponent în lista de imports
+  imports: [FormsModule, CommonModule, HttpClientModule, HotbarComponent],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
@@ -23,7 +27,7 @@ export class App implements OnInit {
       this.currentUser = JSON.parse(userString);
     }
   }
-
+  
   submitForm(form: NgForm) {
     if (!form.valid) return;
 
@@ -35,6 +39,8 @@ export class App implements OnInit {
   }
 
   login() {
+    // Atenție: Ai portul 5257 aici. Asigură-te că și în serviciul hotbar (hotbar.ts) 
+    // ai pus același port la apiUrl: 'http://localhost:5257/api/hotbar'
     this.http.post('http://localhost:5257/api/auth/login', this.model).subscribe({
       next: (response: any) => {
         this.currentUser = response;

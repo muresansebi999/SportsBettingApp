@@ -1,0 +1,11 @@
+[Bb]in/
+[Oo]bj/
+*.db-shm
+*.db-wal
+.vs/
+.vscode/
+node_modules/
+dist/
+*.dll
+*.pdb
+*.exe
