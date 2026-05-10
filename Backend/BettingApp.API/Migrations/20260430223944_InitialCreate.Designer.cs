@@ -11,14 +11,65 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BettingApp.API.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20260411134045_ExtendedUserEntity")]
-    partial class ExtendedUserEntity
+    [Migration("20260430223944_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.0");
+
+            modelBuilder.Entity("BettingApp.API.Models.Match", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<double>("AwayOdds")
+                        .HasColumnType("REAL");
+
+                    b.Property<string>("AwayTeam")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<double>("DrawOdds")
+                        .HasColumnType("REAL");
+
+                    b.Property<double>("HomeOdds")
+                        .HasColumnType("REAL");
+
+                    b.Property<string>("HomeTeam")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("League")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Matches");
+                });
+
+            modelBuilder.Entity("BettingApp.API.Models.Team", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("League")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Teams");
+                });
 
             modelBuilder.Entity("BettingApp.API.Models.User", b =>
                 {

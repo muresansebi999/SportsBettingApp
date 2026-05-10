@@ -1,31 +1,19 @@
-<div *ngIf="currentUser" style="display: flex; flex-direction: column; height: 100vh; overflow: hidden;">
-  
-  <!-- Forțăm bara să fie la cel mai înalt nivel vizual -->
-  <div style="position: relative; z-index: 9999; width: 100%;">
-    <app-hotbar></app-hotbar>
-  </div>
-
-  <!-- Ecranul tău roșu -->
-  <div class="success-screen" style="flex: 1;">
-    <div class="welcome-box">
-      <h1>Salut, {{currentUser.username}}!</h1>
-      <p>Te-ai logat cu succes pe platforma Pisicile Sălbatice.</p>
-      <button (click)="logout()" class="logout-btn">Ieși din cont</button>
-    </div>
+<div *ngIf="currentUser">
+  <app-hotbar></app-hotbar>
+  <div class="main-content">
+    <app-matches></app-matches>
   </div>
 </div>
 
-<!-- Această secțiune apare DOAR când utilizatorul NU este logat -->
 <div *ngIf="!currentUser" class="login-container">
   <div class="login-card">
     <h1>Pisicile Sălbatice</h1>
     <h3>{{ registerMode ? 'Creează Cont' : 'Autentificare' }}</h3>
-    <!-- Am scos <app-hotbar> de aici! -->
 
     <form autocomplete="off" (submit)="$event.preventDefault()" (ngSubmit)="submitForm(authForm)" #authForm="ngForm">
       <input type="text" name="username" [(ngModel)]="model.username" #username="ngModel" placeholder="Utilizator" required minlength="3">
       <small class="val-error" *ngIf="authForm.submitted && username.invalid">Numele de utilizator este necesar (minim 3 caractere).</small>
-      
+
       <div *ngIf="registerMode">
         <input type="text" name="firstName" [(ngModel)]="model.firstName" #firstName="ngModel" placeholder="Prenume" [required]="registerMode">
         <small class="val-error" *ngIf="authForm.submitted && firstName.invalid">Prenumele este necesar.</small>
