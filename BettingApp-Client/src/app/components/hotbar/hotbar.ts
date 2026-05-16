@@ -1,27 +1,39 @@
 import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core'; 
 import { CommonModule } from '@angular/common'; 
+import { FormsModule } from '@angular/forms'; 
 import { HotbarService } from '../../services/hotbar';  
 
 @Component({
   selector: 'app-hotbar',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule], 
   templateUrl: './hotbar.html', 
   styleUrls: ['./hotbar.css']   
 })
 export class HotbarComponent implements OnInit, OnDestroy {
   username: string = '';
   balance: number = 0;
+  firstName: string = '';
+  lastName: string = '';
+  email: string = '';
+  dateOfBirth: string = '';
+
+  editUsername: string = '';
+  editEmail: string = '';
+
+  isEditingUsername: boolean = false;
+  isEditingEmail: boolean = false;
+
   showDepositModal: boolean = false; 
+  showProfileModal: boolean = false;
+  showProfileMenu: boolean = false;
   
-  // Variabile pentru bara custom de succes
   showToast: boolean = false;
   toastMessage: string = '';
 
   private checkInterval: any; 
   private lastKnownUser: string = '';
 
-  // Am adăugat ChangeDetectorRef pentru a ne asigura că Angular actualizează interfața la timp
   constructor(
     private hotbarService: HotbarService,
     private cdr: ChangeDetectorRef
@@ -42,8 +54,11 @@ export class HotbarComponent implements OnInit, OnDestroy {
         } else {
           this.username = 'U';
           this.balance = 0;
+          this.firstName = '';
+          this.lastName = '';
+          this.email = '';
+          this.dateOfBirth = '';
         }
-        // Forțăm interfața să se actualizeze
         this.cdr.detectChanges();
       }
     }, 500);
@@ -60,6 +75,13 @@ export class HotbarComponent implements OnInit, OnDestroy {
       next: (data: any) => {
         this.username = data.username || data.Username || 'U';
         this.balance = data.balance || data.Balance || 0;
+        this.firstName = data.firstName || data.FirstName || '-';
+        this.lastName = data.lastName || data.LastName || '-';
+        this.email = data.email || data.Email || '-';
+        this.dateOfBirth = data.dateOfBirth || data.DateOfBirth || 'Nespecificată';
+
+        this.editUsername = this.username;
+        this.editEmail = this.email;
         this.cdr.detectChanges();
       },
       error: (err: any) => console.error('Eroare la încărcarea datelor:', err)
@@ -68,21 +90,90 @@ export class HotbarComponent implements OnInit, OnDestroy {
 
   openModal() {
     this.showDepositModal = true;
+    this.showProfileModal = false;
+    this.showProfileMenu = false; 
+  }
+  closeModal() { this.showDepositModal = false; }
+
+  openProfileModal() {
+    this.showProfileModal = true;
+    this.showDepositModal = false;
+    this.showProfileMenu = false; 
+    
+    this.isEditingUsername = false;
+    this.isEditingEmail = false;
+    this.editUsername = this.username;
+    this.editEmail = this.email;
+  }
+  closeProfileModal() { this.showProfileModal = false; }
+
+  toggleProfileMenu() { this.showProfileMenu = !this.showProfileMenu; }
+
+  onLogout() {
+    this.showProfileMenu = false; 
+    this.hotbarService.logout();  
+    window.location.reload();
   }
 
-  closeModal() {
-    this.showDepositModal = false;
+  saveProfileChanges() {
+    if(!this.isEditingUsername && !this.isEditingEmail) {
+      this.closeProfileModal();
+      return;
+    }
+
+    if(!this.editUsername || !this.editEmail) {
+      alert("Câmpurile nu pot fi goale!");
+      return;
+    }
+
+    this.hotbarService.updateProfile(this.username, this.editUsername, this.editEmail).subscribe({
+      next: (response: any) => {
+        const userStr = localStorage.getItem('user');
+        if (userStr) {
+          let userObj = JSON.parse(userStr);
+          userObj.username = response.newUsername;
+          userObj.email = response.newEmail;
+          localStorage.setItem('user', JSON.stringify(userObj));
+        }
+
+        this.username = response.newUsername;
+        this.email = response.newEmail;
+        this.lastKnownUser = response.newUsername; 
+
+        this.closeProfileModal();
+        
+        setTimeout(() => {
+          this.displaySuccessToast(`Profilul a fost actualizat cu succes!`);
+        }, 150);
+      },
+      error: (err: any) => {
+        console.error("Eroare Detaliată:", err); // Afisam si in consola F12
+
+        // Extragem eroare EXACTĂ pentru a vedea de ce crapă
+        let errorMsg = 'Eroare de rețea. Te rog verifică dacă C# (backend-ul) rulează.';
+        
+        if (err.status === 409) {
+          errorMsg = 'Acest username este deja luat!';
+        } else if (err.error && err.error.message) {
+          errorMsg = err.error.message;
+        } else if (err.error && typeof err.error === 'string') {
+          errorMsg = err.error;
+        } else if (err.message) {
+          errorMsg = err.message;
+        }
+
+        alert(`Eroare:\n${errorMsg}`);
+      }
+    });
   }
 
   displaySuccessToast(message: string) {
     this.toastMessage = message;
     this.showToast = true;
-    this.cdr.detectChanges(); // Spunem lui Angular să arate bara imediat
-    
-    // După fix 2 secunde, o ascundem
+    this.cdr.detectChanges(); 
     setTimeout(() => {
       this.showToast = false;
-      this.cdr.detectChanges(); // Spunem lui Angular să o ascundă
+      this.cdr.detectChanges(); 
     }, 2000); 
   }
 
@@ -90,7 +181,6 @@ export class HotbarComponent implements OnInit, OnDestroy {
     this.hotbarService.depositFunds(amount).subscribe({
       next: (response: any) => {
         const newBal = response.newBalance || response.NewBalance;
-        
         this.balance = newBal;
         
         const userStr = localStorage.getItem('user');
@@ -99,20 +189,12 @@ export class HotbarComponent implements OnInit, OnDestroy {
           userObj.balance = newBal;
           localStorage.setItem('user', JSON.stringify(userObj));
         }
-
-        // 1. Închidem imediat meniul negru
         this.closeModal(); 
-        
-        // 2. Așteptăm o fracțiune de secundă (150ms) ca să se închidă meniul frumos, apoi afișăm bara albă
         setTimeout(() => {
           this.displaySuccessToast(`Depunere de $${amount} realizată cu succes!`);
         }, 150);
-
       },
-      error: (err: any) => {
-        console.error('Eroare la depunere', err);
-        alert('A apărut o eroare la depunere.');
-      }
+      error: (err: any) => alert('A apărut o eroare la depunere.')
     });
   }
 }
