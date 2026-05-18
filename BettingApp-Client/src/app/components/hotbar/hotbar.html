@@ -1,34 +1,28 @@
 <div class="hotbar-container">
-  <div class="logo">
-    Pisicile Sălbatice
-  </div>
-
+  <div class="logo">Pisicile Sălbatice</div>
   <div class="user-actions">
-    <div class="balance">
-      {{ balance | currency:'USD':'symbol' }}
-    </div>
-    
-    <button class="btn-deposit" (click)="openModal()">
-      Deposit
-    </button>
-    
-    <div class="profile-icon">
-      {{ username ? username.charAt(0).toUpperCase() : 'U' }}
+    <div class="balance">{{ balance | currency:'USD':'symbol' }}</div>
+    <button class="btn-deposit" (click)="openModal()">Deposit</button>
+    <div class="profile-container">
+      <div class="profile-icon" (click)="toggleProfileMenu()">
+        {{ username ? username.charAt(0).toUpperCase() : 'U' }}
+      </div>
+      <div class="profile-menu" *ngIf="showProfileMenu">
+        <div class="menu-header">Salut, {{ username || 'User' }}</div>
+        <button class="profile-btn" (click)="openProfileModal()">Profil</button>
+        <button class="logout-btn" (click)="onLogout()">Log Out</button>
+      </div>
     </div>
   </div>
 </div>
 
-<!-- Meniul Modal de Depunere -->
 <div class="modal-overlay" *ngIf="showDepositModal">
   <div class="modal-content">
-    
     <div class="modal-header">
       <h2>Depunere Fonduri</h2>
       <button class="close-btn" (click)="closeModal()">✕</button>
     </div>
-    
     <p class="modal-text">Selectează suma pe care dorești să o adaugi în cont:</p>
-    
     <div class="amount-grid">
       <button class="amount-btn" (click)="confirmDeposit(10)">$10</button>
       <button class="amount-btn" (click)="confirmDeposit(25)">$25</button>
@@ -37,11 +31,64 @@
       <button class="amount-btn" (click)="confirmDeposit(500)">$500</button>
       <button class="amount-btn" (click)="confirmDeposit(1000)">$1000</button>
     </div>
-
   </div>
 </div>
 
-<!-- BARA ALBĂ CUSTOM (Toast Notification) -->
+<div class="modal-overlay" *ngIf="showProfileModal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>Detalii Profil</h2>
+      <button class="close-btn" (click)="closeProfileModal()">✕</button>
+    </div>
+    
+    <div class="profile-details-list">
+      
+      <div class="detail-row">
+        <span>Nume:</span> <strong>{{ lastName }}</strong>
+      </div>
+      <div class="detail-row">
+        <span>Prenume:</span> <strong>{{ firstName }}</strong>
+      </div>
+      <div class="detail-row">
+        <span>Data Nașterii:</span> <strong>{{ dateOfBirth }}</strong>
+      </div>
+
+      <!-- Secțiune Username FĂRĂ CREION -->
+      <div class="edit-group">
+        <div class="detail-col">
+          <span>Username:</span>
+          <strong *ngIf="!isEditingUsername">{{ username }}</strong>
+          <input *ngIf="isEditingUsername" type="text" class="custom-input" [(ngModel)]="editUsername">
+        </div>
+        <small class="helper-text clickable" *ngIf="!isEditingUsername" (click)="isEditingUsername = true">
+          Apasă aici pentru a schimba username-ul
+        </small>
+        <small class="helper-text outside" *ngIf="isEditingUsername">Introdu noul username.</small>
+      </div>
+
+      <!-- Secțiune Email FĂRĂ CREION -->
+      <div class="edit-group">
+        <div class="detail-col">
+          <span>Email:</span>
+          <strong *ngIf="!isEditingEmail">{{ email }}</strong>
+          <input *ngIf="isEditingEmail" type="email" class="custom-input" [(ngModel)]="editEmail">
+        </div>
+        <small class="helper-text clickable" *ngIf="!isEditingEmail" (click)="isEditingEmail = true">
+          Apasă aici pentru a schimba email-ul
+        </small>
+        <small class="helper-text outside" *ngIf="isEditingEmail">Introdu noua adresă de mail.</small>
+      </div>
+
+      <div class="detail-row balance-row">
+        <span>Balanță:</span> <strong>{{ balance | currency:'USD':'symbol' }}</strong>
+      </div>
+
+      <button class="btn-save-profile" (click)="saveProfileChanges()">Salvează Modificările</button>
+      
+    </div>
+  </div>
+</div>
+
 <div class="toast-notification" [class.show]="showToast">
   {{ toastMessage }}
 </div>
