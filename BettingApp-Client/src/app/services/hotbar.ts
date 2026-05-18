@@ -34,6 +34,11 @@ export class HotbarService {
     return this.http.post(`${this.apiUrl}/deposit`, { username: username, amount: amount });
   }
 
+  withdrawFunds(amount: number): Observable<any> {
+    const username = this.getUsername();
+    return this.http.post(`${this.apiUrl}/withdraw`, { username: username, amount: amount });
+  }
+
   // NOU: Am schimbat în this.http.post pentru a potrivi cu C#
   updateProfile(oldUsername: string, newUsername: string, email: string): Observable<any> {
     return this.http.post(`${this.apiUrl}/update`, {

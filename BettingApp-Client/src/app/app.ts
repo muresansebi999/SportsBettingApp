@@ -4,6 +4,7 @@ import { FormsModule, NgForm } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { HotbarComponent } from './components/hotbar/hotbar';
 import { MatchesComponent } from './components/matches/matches_component';
+import { HotbarService } from './services/hotbar';
 
 @Component({
   selector: 'app-root',
@@ -17,7 +18,7 @@ export class App implements OnInit {
   registerMode = false;
   currentUser: any = null;
 
-  constructor(private http: HttpClient, private cdr: ChangeDetectorRef) {}
+  constructor(private http: HttpClient, private cdr: ChangeDetectorRef, private hotbarService: HotbarService) {}
 
   ngOnInit(): void {
     const userString = localStorage.getItem('user');
@@ -40,6 +41,7 @@ export class App implements OnInit {
       next: (response: any) => {
         this.currentUser = response;
         localStorage.setItem('user', JSON.stringify(response));
+        this.hotbarService.onLoginSuccess.next();
         this.cdr.detectChanges();
       },
       error: (err) => {

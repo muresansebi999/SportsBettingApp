@@ -58,6 +58,25 @@ namespace BettingApp.API.Controllers
             return Ok(new { message = "Depunere cu succes", newBalance = user.Balance });
         }
 
+        [HttpPost("withdraw")]
+        public async Task<IActionResult> Withdraw([FromBody] WithdrawDto request)
+        {
+            if (request.Amount <= 0) return BadRequest("Suma invalidă.");
+            if (string.IsNullOrEmpty(request.Username)) return BadRequest("Username lipsă.");
+
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Username.ToLower() == request.Username.ToLower());
+            if (user == null) return NotFound("Userul nu a fost găsit.");
+
+            if (user.Balance < request.Amount) return BadRequest("Fonduri insuficiente.");
+
+            user.Balance -= request.Amount;
+
+            _context.Users.Update(user);
+            await _context.SaveChangesAsync();
+
+            return Ok(new { message = "Retragere cu succes", newBalance = user.Balance });
+        }
+
         // NOU: Am schimbat în HttpPost ca să nu mai fie blocat de browser
         [HttpPost("update")]
         public async Task<IActionResult> UpdateProfile([FromBody] UpdateProfileRequest request)

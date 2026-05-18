@@ -24,15 +24,17 @@ export class HotbarComponent implements OnInit, OnDestroy {
   isEditingUsername: boolean = false;
   isEditingEmail: boolean = false;
 
-  showDepositModal: boolean = false; 
+  showTransactionModal: boolean = false;
+  transactionType: 'Deposit' | 'Withdraw' = 'Deposit';
+  customAmount: number | null = null;
+
   showProfileModal: boolean = false;
   showProfileMenu: boolean = false;
   
   showToast: boolean = false;
   toastMessage: string = '';
 
-  private checkInterval: any; 
-  private lastKnownUser: string = '';
+  private authSub: any;
 
   constructor(
     private hotbarService: HotbarService,
@@ -42,31 +44,15 @@ export class HotbarComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.loadUserInfo();
 
-    this.checkInterval = setInterval(() => {
-      const currentUser = this.hotbarService.getCurrentUser();
-      const actualName = currentUser ? (currentUser.username || currentUser.Username) : '';
-      
-      if (actualName !== this.lastKnownUser) {
-        this.lastKnownUser = actualName;
-        
-        if (actualName) {
-          this.loadUserInfo(); 
-        } else {
-          this.username = 'U';
-          this.balance = 0;
-          this.firstName = '';
-          this.lastName = '';
-          this.email = '';
-          this.dateOfBirth = '';
-        }
-        this.cdr.detectChanges();
-      }
-    }, 500);
+    // Listen for login/logout/update events to refresh data without polling
+    this.authSub = this.hotbarService.onLoginSuccess.subscribe(() => {
+      this.loadUserInfo();
+    });
   }
 
   ngOnDestroy(): void {
-    if (this.checkInterval) {
-      clearInterval(this.checkInterval);
+    if (this.authSub) {
+      this.authSub.unsubscribe();
     }
   }
 
@@ -88,16 +74,18 @@ export class HotbarComponent implements OnInit, OnDestroy {
     });
   }
 
-  openModal() {
-    this.showDepositModal = true;
+  openTransactionModal(type: 'Deposit' | 'Withdraw') {
+    this.transactionType = type;
+    this.customAmount = null;
+    this.showTransactionModal = true;
     this.showProfileModal = false;
     this.showProfileMenu = false; 
   }
-  closeModal() { this.showDepositModal = false; }
+  closeTransactionModal() { this.showTransactionModal = false; }
 
   openProfileModal() {
     this.showProfileModal = true;
-    this.showDepositModal = false;
+    this.showTransactionModal = false;
     this.showProfileMenu = false; 
     
     this.isEditingUsername = false;
@@ -138,7 +126,7 @@ export class HotbarComponent implements OnInit, OnDestroy {
 
         this.username = response.newUsername;
         this.email = response.newEmail;
-        this.lastKnownUser = response.newUsername; 
+        this.email = response.newEmail;
 
         this.closeProfileModal();
         
@@ -177,24 +165,52 @@ export class HotbarComponent implements OnInit, OnDestroy {
     }, 2000); 
   }
 
-  confirmDeposit(amount: number) {
-    this.hotbarService.depositFunds(amount).subscribe({
-      next: (response: any) => {
-        const newBal = response.newBalance || response.NewBalance;
-        this.balance = newBal;
-        
-        const userStr = localStorage.getItem('user');
-        if (userStr) {
-          let userObj = JSON.parse(userStr);
-          userObj.balance = newBal;
-          localStorage.setItem('user', JSON.stringify(userObj));
+  confirmTransaction(amount?: number) {
+    const finalAmount = amount !== undefined ? amount : this.customAmount;
+    
+    if (!finalAmount || finalAmount <= 0) {
+      alert('Te rugăm să introduci o sumă validă mai mare de 0.');
+      return;
+    }
+
+    if (this.transactionType === 'Deposit') {
+      this.hotbarService.depositFunds(finalAmount).subscribe({
+        next: (response: any) => {
+          this.updateBalance(response.newBalance || response.NewBalance);
+          this.closeTransactionModal(); 
+          setTimeout(() => {
+            this.displaySuccessToast(`Depunere de $${finalAmount} realizată cu succes!`);
+          }, 150);
+        },
+        error: (err: any) => alert('A apărut o eroare la depunere.')
+      });
+    } else {
+      this.hotbarService.withdrawFunds(finalAmount).subscribe({
+        next: (response: any) => {
+          this.updateBalance(response.newBalance || response.NewBalance);
+          this.closeTransactionModal(); 
+          setTimeout(() => {
+            this.displaySuccessToast(`Retragere de $${finalAmount} realizată cu succes!`);
+          }, 150);
+        },
+        error: (err: any) => {
+          if (err.status === 400 && err.error) {
+            alert(err.error);
+          } else {
+            alert('A apărut o eroare la retragere.');
+          }
         }
-        this.closeModal(); 
-        setTimeout(() => {
-          this.displaySuccessToast(`Depunere de $${amount} realizată cu succes!`);
-        }, 150);
-      },
-      error: (err: any) => alert('A apărut o eroare la depunere.')
-    });
+      });
+    }
+  }
+
+  private updateBalance(newBal: number) {
+    this.balance = newBal;
+    const userStr = localStorage.getItem('user');
+    if (userStr) {
+      let userObj = JSON.parse(userStr);
+      userObj.balance = newBal;
+      localStorage.setItem('user', JSON.stringify(userObj));
+    }
   }
 }

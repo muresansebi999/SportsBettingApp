@@ -6,8 +6,8 @@
 </div>
 
 <div *ngIf="!currentUser" class="login-container">
-  <div class="login-card">
-    <h1>Pisicile Sălbatice</h1>
+  <div class="login-card glass-panel">
+    <h1 class="text-gradient">Pisicile Sălbatice</h1>
     <h3>{{ registerMode ? 'Creează Cont' : 'Autentificare' }}</h3>
 
     <form autocomplete="off" (submit)="$event.preventDefault()" (ngSubmit)="submitForm(authForm)" #authForm="ngForm">

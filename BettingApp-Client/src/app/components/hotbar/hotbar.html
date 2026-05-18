@@ -2,7 +2,8 @@
   <div class="logo">Pisicile Sălbatice</div>
   <div class="user-actions">
     <div class="balance">{{ balance | currency:'USD':'symbol' }}</div>
-    <button class="btn-deposit" (click)="openModal()">Deposit</button>
+    <button class="btn-deposit" (click)="openTransactionModal('Deposit')">Depunere</button>
+    <button class="btn-withdraw" (click)="openTransactionModal('Withdraw')">Retragere</button>
     <div class="profile-container">
       <div class="profile-icon" (click)="toggleProfileMenu()">
         {{ username ? username.charAt(0).toUpperCase() : 'U' }}
@@ -16,20 +17,29 @@
   </div>
 </div>
 
-<div class="modal-overlay" *ngIf="showDepositModal">
+<div class="modal-overlay" *ngIf="showTransactionModal">
   <div class="modal-content">
     <div class="modal-header">
-      <h2>Depunere Fonduri</h2>
-      <button class="close-btn" (click)="closeModal()">✕</button>
+      <h2>{{ transactionType === 'Deposit' ? 'Depunere Fonduri' : 'Retragere Fonduri' }}</h2>
+      <button class="close-btn" (click)="closeTransactionModal()">✕</button>
     </div>
-    <p class="modal-text">Selectează suma pe care dorești să o adaugi în cont:</p>
+    <p class="modal-text">Selectează suma pe care dorești să o {{ transactionType === 'Deposit' ? 'adaugi în' : 'retragi din' }} cont:</p>
     <div class="amount-grid">
-      <button class="amount-btn" (click)="confirmDeposit(10)">$10</button>
-      <button class="amount-btn" (click)="confirmDeposit(25)">$25</button>
-      <button class="amount-btn" (click)="confirmDeposit(100)">$100</button>
-      <button class="amount-btn" (click)="confirmDeposit(200)">$200</button>
-      <button class="amount-btn" (click)="confirmDeposit(500)">$500</button>
-      <button class="amount-btn" (click)="confirmDeposit(1000)">$1000</button>
+      <button class="amount-btn" (click)="confirmTransaction(10)">$10</button>
+      <button class="amount-btn" (click)="confirmTransaction(25)">$25</button>
+      <button class="amount-btn" (click)="confirmTransaction(100)">$100</button>
+      <button class="amount-btn" (click)="confirmTransaction(200)">$200</button>
+      <button class="amount-btn" (click)="confirmTransaction(500)">$500</button>
+      <button class="amount-btn" (click)="confirmTransaction(1000)">$1000</button>
+    </div>
+    
+    <div class="custom-amount-section">
+      <p class="modal-text" style="margin-top: 20px; margin-bottom: 10px;">Sau introdu o sumă personalizată:</p>
+      <div class="custom-amount-input-group">
+        <span class="currency-symbol">$</span>
+        <input type="number" [(ngModel)]="customAmount" class="custom-input custom-amount-input" placeholder="Ex: 55" min="1">
+        <button class="btn-confirm-custom" (click)="confirmTransaction()">Confirmă</button>
+      </div>
     </div>
   </div>
 </div>
