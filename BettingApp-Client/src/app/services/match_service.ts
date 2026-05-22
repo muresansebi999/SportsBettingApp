@@ -18,4 +18,8 @@ export class MatchService {
   getMatchesByLeague(league: string): Observable<Match[]> {
     return this.http.get<Match[]>(`${this.apiUrl}/league/${league}`);
   }
+
+  updateFromApi(): Observable<any> {
+    return this.http.post(`${this.apiUrl}/update`, {});
+  }
 }

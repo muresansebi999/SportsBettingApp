@@ -2,6 +2,9 @@
   <div class="logo">Pisicile Sălbatice</div>
   <div class="user-actions">
     <div class="balance">{{ balance | currency:'USD':'symbol' }}</div>
+    <button class="btn-update" (click)="updateFromApi()" [disabled]="isUpdating">
+      {{ isUpdating ? 'Updating...' : 'Update' }}
+    </button>
     <button class="btn-deposit" (click)="openTransactionModal('Deposit')">Depunere</button>
     <button class="btn-withdraw" (click)="openTransactionModal('Withdraw')">Retragere</button>
     <div class="profile-container">

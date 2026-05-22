@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common'; 
 import { FormsModule } from '@angular/forms'; 
 import { HotbarService } from '../../services/hotbar';  
+import { MatchService } from '../../services/match_service';
 
 @Component({
   selector: 'app-hotbar',
@@ -34,10 +35,13 @@ export class HotbarComponent implements OnInit, OnDestroy {
   showToast: boolean = false;
   toastMessage: string = '';
 
+  isUpdating: boolean = false;
+
   private authSub: any;
 
   constructor(
     private hotbarService: HotbarService,
+    private matchService: MatchService,
     private cdr: ChangeDetectorRef
   ) {}
 
@@ -212,5 +216,24 @@ export class HotbarComponent implements OnInit, OnDestroy {
       userObj.balance = newBal;
       localStorage.setItem('user', JSON.stringify(userObj));
     }
+  }
+
+  updateFromApi() {
+    this.isUpdating = true;
+    this.matchService.updateFromApi().subscribe({
+      next: (res) => {
+        this.isUpdating = false;
+        this.displaySuccessToast(res.message || 'Matches updated successfully!');
+        // optionally reload page or emit event to matches component
+        setTimeout(() => {
+          window.location.reload();
+        }, 1500);
+      },
+      error: (err) => {
+        this.isUpdating = false;
+        console.error(err);
+        alert('Eroare la actualizarea meciurilor din API.');
+      }
+    });
   }
 }

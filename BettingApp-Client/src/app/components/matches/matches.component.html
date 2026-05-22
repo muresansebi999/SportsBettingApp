@@ -9,35 +9,118 @@
     </button>
   </div>
 
+  <div class="status-tabs" style="display: flex; justify-content: center; gap: 10px; margin-bottom: 20px;">
+    <button class="tab-btn" [class.active]="tabState === 'upcoming'" (click)="setTab('upcoming')">
+      Evenimente
+    </button>
+    <button class="tab-btn" [class.active]="tabState === 'live'" (click)="setTab('live')">
+      Live
+    </button>
+    <button class="tab-btn" [class.active]="tabState === 'finished'" (click)="setTab('finished')">
+      Rezultate
+    </button>
+  </div>
+
   <div *ngIf="loading" class="status-msg">Loading matches...</div>
   <div *ngIf="error" class="status-msg error">Failed to load matches. Is the backend running?</div>
 
   <div *ngIf="!loading && !error" class="matches-list">
-    <div *ngIf="filteredMatches.length === 0" class="status-msg">
-      No matches found for {{ selectedLeague }}.
-    </div>
+    
+    <ng-container *ngIf="tabState === 'upcoming'">
+      <div *ngIf="upcomingMatches.length === 0" class="status-msg">
+        No upcoming matches found for {{ selectedLeague }}.
+      </div>
 
-    <div class="match-card" *ngFor="let match of filteredMatches">
-      <div class="match-league">{{ match.league }}</div>
-      <div class="match-teams">
-        <span class="team home">{{ match.homeTeam }}</span>
-        <span class="vs">VS</span>
-        <span class="team away">{{ match.awayTeam }}</span>
+      <div class="match-card" *ngFor="let match of upcomingMatches">
+        <div class="match-header" style="display: flex; justify-content: space-between; font-size: 0.8em; color: #888; margin-bottom: 10px;">
+          <span class="match-league">{{ match.league }}</span>
+          <span class="match-date">{{ match.startTime | date:'dd/MM/yyyy HH:mm' }}</span>
+        </div>
+        <div class="match-teams">
+          <span class="team home">{{ match.homeTeam }}</span>
+          <span class="vs">VS</span>
+          <span class="team away">{{ match.awayTeam }}</span>
+        </div>
+        <div class="match-odds">
+          <div class="odd-box">
+            <span class="odd-label">1</span>
+            <span class="odd-value">{{ match.homeOdds ? match.homeOdds.toFixed(2) : '-' }}</span>
+          </div>
+          <div class="odd-box">
+            <span class="odd-label">X</span>
+            <span class="odd-value">{{ match.drawOdds ? match.drawOdds.toFixed(2) : '-' }}</span>
+          </div>
+          <div class="odd-box">
+            <span class="odd-label">2</span>
+            <span class="odd-value">{{ match.awayOdds ? match.awayOdds.toFixed(2) : '-' }}</span>
+          </div>
+        </div>
       </div>
-      <div class="match-odds">
-        <div class="odd-box">
-          <span class="odd-label">1</span>
-          <span class="odd-value">{{ match.homeOdds.toFixed(2) }}</span>
+    </ng-container>
+
+    <ng-container *ngIf="tabState === 'live'">
+      <div *ngIf="liveMatches.length === 0" class="status-msg">
+        No live matches found for {{ selectedLeague }}.
+      </div>
+
+      <div class="match-card" *ngFor="let match of liveMatches" style="border: 1px solid rgba(255, 51, 102, 0.4);">
+        <div class="match-header" style="display: flex; justify-content: space-between; font-size: 0.8em; color: #888; margin-bottom: 10px;">
+          <span class="match-league">{{ match.league }}</span>
+          <span class="match-date" style="color: #ff3366; font-weight: bold;">🔴 LIVE NOW</span>
         </div>
-        <div class="odd-box">
-          <span class="odd-label">X</span>
-          <span class="odd-value">{{ match.drawOdds.toFixed(2) }}</span>
+        <div class="match-teams">
+          <span class="team home">{{ match.homeTeam }}</span>
+          <span class="vs" style="color: #ff3366;">{{ match.homeScore !== undefined && match.homeScore !== null ? match.homeScore + ' - ' + match.awayScore : 'VS' }}</span>
+          <span class="team away">{{ match.awayTeam }}</span>
         </div>
-        <div class="odd-box">
-          <span class="odd-label">2</span>
-          <span class="odd-value">{{ match.awayOdds.toFixed(2) }}</span>
+        <div class="match-odds">
+          <div class="odd-box">
+            <span class="odd-label">1</span>
+            <span class="odd-value">{{ match.homeOdds ? match.homeOdds.toFixed(2) : '-' }}</span>
+          </div>
+          <div class="odd-box">
+            <span class="odd-label">X</span>
+            <span class="odd-value">{{ match.drawOdds ? match.drawOdds.toFixed(2) : '-' }}</span>
+          </div>
+          <div class="odd-box">
+            <span class="odd-label">2</span>
+            <span class="odd-value">{{ match.awayOdds ? match.awayOdds.toFixed(2) : '-' }}</span>
+          </div>
         </div>
       </div>
-    </div>
+    </ng-container>
+
+    <ng-container *ngIf="tabState === 'finished'">
+      <div *ngIf="finishedMatches.length === 0" class="status-msg">
+        No finished matches found for {{ selectedLeague }}.
+      </div>
+
+      <div class="match-card" *ngFor="let match of finishedMatches">
+        <div class="match-header" style="display: flex; justify-content: space-between; font-size: 0.8em; color: #888; margin-bottom: 10px;">
+          <span class="match-league">{{ match.league }}</span>
+          <span class="match-date">{{ match.startTime | date:'dd/MM/yyyy HH:mm' }}</span>
+        </div>
+        <div class="match-teams">
+          <span class="team home">{{ match.homeTeam }}</span>
+          <span class="vs">{{ match.homeScore !== undefined && match.homeScore !== null ? match.homeScore + ' - ' + match.awayScore : 'VS' }}</span>
+          <span class="team away">{{ match.awayTeam }}</span>
+        </div>
+        <div class="match-odds" style="opacity: 0.5;">
+          <div class="odd-box">
+            <span class="odd-label">1</span>
+            <span class="odd-value">{{ match.homeOdds ? match.homeOdds.toFixed(2) : '-' }}</span>
+          </div>
+          <div class="odd-box">
+            <span class="odd-label">X</span>
+            <span class="odd-value">{{ match.drawOdds ? match.drawOdds.toFixed(2) : '-' }}</span>
+          </div>
+          <div class="odd-box">
+            <span class="odd-label">2</span>
+            <span class="odd-value">{{ match.awayOdds ? match.awayOdds.toFixed(2) : '-' }}</span>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+
   </div>
 </div>

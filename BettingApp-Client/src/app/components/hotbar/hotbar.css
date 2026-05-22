@@ -45,6 +45,26 @@
 }
 .btn-deposit:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(255, 0, 127, 0.4); }
 
+.btn-update { 
+  background: rgba(255, 255, 255, 0.1);
+  color: white; 
+  border: 1px solid rgba(255, 255, 255, 0.2); 
+  padding: 10px 24px; 
+  border-radius: 8px; 
+  font-weight: 600; 
+  cursor: pointer; 
+  transition: var(--transition-fast); 
+}
+.btn-update:hover { 
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px); 
+}
+.btn-update:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
 .btn-withdraw {
   background: transparent;
   color: var(--accent-secondary);
