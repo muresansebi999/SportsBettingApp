@@ -2,6 +2,7 @@ import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatchService } from '../../services/match_service';
 import { Match } from '../../models/match_model';
+import { BetSlipService } from '../../services/bet_slip_service';
 
 @Component({
   selector: 'app-matches',
@@ -24,7 +25,9 @@ export class MatchesComponent implements OnInit {
   loading = true;
   error = false;
 
-  constructor(private matchService: MatchService, private cdr: ChangeDetectorRef) {}
+  constructor(private matchService: MatchService, private betSlip: BetSlipService, private cdr: ChangeDetectorRef) {
+
+  }
 
   ngOnInit(): void {
     this.loadMatches();
@@ -85,4 +88,27 @@ export class MatchesComponent implements OnInit {
       .filter(m => m.isFinished)
       .sort((a, b) => new Date(b.startTime).getTime() - new Date(a.startTime).getTime());
   }
+
+  addToSlip(match: Match, outcome: '1' | 'X' | '2'): void {
+  const odd =
+    outcome === '1' ? match.homeOdds :
+    outcome === '2' ? match.awayOdds :
+    match.drawOdds;
+
+  // Don't add a selection with no/zero odd.
+  if (!odd) return;
+
+  this.betSlip.addSelection({
+    matchId: match.id,
+    homeTeam: match.homeTeam,
+    awayTeam: match.awayTeam,
+    outcome: outcome,
+    odd: odd
+  });
+}
+
+isSelected(match: Match, outcome: '1' | 'X' | '2'): boolean {
+  return this.betSlip.getSelectedOutcome(match.id) === outcome;
+}
+
 }

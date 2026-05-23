@@ -147,4 +147,7 @@ input::placeholder {
   min-height: calc(100vh - 70px);
   color: var(--text-main);
   padding: 20px;
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
 }

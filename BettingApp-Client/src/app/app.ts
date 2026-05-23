@@ -4,12 +4,13 @@ import { FormsModule, NgForm } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { HotbarComponent } from './components/hotbar/hotbar';
 import { MatchesComponent } from './components/matches/matches_component';
+import { BetSlipComponent } from './components/bet-slip/bet-slip';
 import { HotbarService } from './services/hotbar';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [FormsModule, CommonModule, HotbarComponent, MatchesComponent],
+  imports: [FormsModule, CommonModule, HotbarComponent, MatchesComponent, BetSlipComponent],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })

@@ -1,0 +1,243 @@
+.slip {
+  position: sticky;
+  top: 90px;
+  width: 320px;
+  flex-shrink: 0;
+  background: var(--bg-panel);
+  border: 1px solid var(--border-subtle);
+  border-radius: 16px;
+  padding: 18px;
+  color: var(--text-main);
+  font-family: inherit;
+  max-height: calc(100vh - 110px);
+  display: flex;
+  flex-direction: column;
+}
+
+.slip-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 700;
+  font-size: 1.1rem;
+  margin-bottom: 14px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.slip-count {
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+  border-radius: 999px;
+  padding: 2px 10px;
+  font-size: 0.85rem;
+}
+
+.slip-empty {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  text-align: center;
+  padding: 30px 10px;
+}
+
+.slip-selections {
+  overflow-y: auto;
+  flex-grow: 1;
+}
+
+.slip-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.slip-row-info { flex-grow: 1; }
+
+.slip-match {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+
+.slip-pick {
+  font-weight: 600;
+  display: flex;
+  justify-content: space-between;
+}
+
+.slip-odd { color: var(--accent-secondary); }
+
+.slip-remove {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 0.9rem;
+  padding: 2px 4px;
+}
+.slip-remove:hover { color: #ff4d4f; }
+
+.slip-footer { padding-top: 14px; }
+
+.slip-line {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  font-size: 0.95rem;
+}
+
+.slip-total-odds {
+  font-weight: 700;
+  color: var(--accent-secondary);
+}
+
+.slip-stake { margin-bottom: 12px; }
+
+.slip-stake label {
+  display: block;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+}
+
+.slip-stake input {
+  width: 100%;
+  padding: 10px 12px;
+  background: rgba(0,0,0,0.25);
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  color: white;
+  box-sizing: border-box;
+  font-family: inherit;
+  font-size: 0.95rem;
+}
+
+/* kill the number-input spinners for a cleaner look */
+.slip-stake input::-webkit-outer-spin-button,
+.slip-stake input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.slip-stake input { -moz-appearance: textfield; }
+
+.slip-payout {
+  font-weight: 700;
+  font-size: 1.05rem;
+}
+
+.slip-place {
+  width: 100%;
+  padding: 12px;
+  margin-top: 6px;
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+}
+.slip-place:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.slip-clear {
+  width: 100%;
+  padding: 8px;
+  margin-top: 8px;
+  background: none;
+  border: 1px solid var(--border-subtle);
+  color: var(--text-muted);
+  border-radius: 10px;
+  cursor: pointer;
+  font-family: inherit;
+}
+.slip-clear:hover { color: #ff4d4f; border-color: #ff4d4f; }
+
+.slip-tabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 16px;
+}
+
+.slip-tab {
+  flex: 1;
+  padding: 8px 4px;
+  border: none;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.04);
+  color: #aaa;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.slip-tab:hover {
+  color: #fff;
+}
+
+.slip-tab.active {
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+  color: #fff;
+}
+
+.bet-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 10px;
+  padding: 12px;
+  margin-bottom: 10px;
+}
+
+.bet-card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.bet-status {
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 6px;
+}
+
+.bet-status.pending { background: rgba(255, 180, 0, 0.15); color: #ffb400; }
+.bet-status.won     { background: rgba(40, 200, 100, 0.15); color: #28c864; }
+.bet-status.lost    { background: rgba(230, 60, 80, 0.15); color: #e63c50; }
+
+.bet-date {
+  font-size: 0.7rem;
+  color: #777;
+}
+
+.bet-sel {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  color: #ccc;
+  padding: 3px 0;
+}
+
+.bet-sel-pick b { color: #fff; }
+
+.bet-card-foot {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  font-size: 0.75rem;
+  color: #aaa;
+}
+
+.payout-won { color: #28c864; font-weight: 700; }

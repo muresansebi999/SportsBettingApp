@@ -182,3 +182,14 @@
 .status-msg.error {
   color: var(--accent-secondary);
 }
+
+/* --- selected odd (bet slip) --- */
+.odd-box.selected {
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+  border-color: transparent;
+  box-shadow: 0 4px 15px var(--accent-glow);
+}
+
+.odd-box.selected .odd-label {
+  color: rgba(255,255,255,0.85);
+}

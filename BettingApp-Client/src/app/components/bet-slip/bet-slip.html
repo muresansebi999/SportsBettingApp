@@ -1,0 +1,122 @@
+<div class="slip">
+  <!-- Tab strip: names always visible, active one highlighted -->
+  <div class="slip-tabs">
+    <button class="slip-tab" [class.active]="activeTab === 'bilet'" (click)="setTab('bilet')">
+      Bilet
+      <span class="slip-count" *ngIf="selections.length > 0">{{ selections.length }}</span>
+    </button>
+    <button class="slip-tab" [class.active]="activeTab === 'activ'" (click)="setTab('activ')">
+      Bilete active
+    </button>
+    <button class="slip-tab" [class.active]="activeTab === 'istoric'" (click)="setTab('istoric')">
+      Istoric
+    </button>
+  </div>
+
+  <!-- ============ TAB: BILET (the live slip, unchanged) ============ -->
+  <div *ngIf="activeTab === 'bilet'">
+    <div *ngIf="selections.length === 0" class="slip-empty">
+      Apasă pe o cotă pentru a adăuga un eveniment.
+    </div>
+
+    <div class="slip-selections" *ngIf="selections.length > 0">
+      <div class="slip-row" *ngFor="let sel of selections">
+        <div class="slip-row-info">
+          <div class="slip-match">{{ sel.homeTeam }} vs {{ sel.awayTeam }}</div>
+          <div class="slip-pick">{{ outcomeLabel(sel) }} <span class="slip-odd">{{ sel.odd.toFixed(2) }}</span></div>
+        </div>
+        <button class="slip-remove" (click)="remove(sel.matchId)">✕</button>
+      </div>
+    </div>
+
+    <div class="slip-footer" *ngIf="selections.length > 0">
+      <div class="slip-line">
+        <span>Cotă totală</span>
+        <span class="slip-total-odds">{{ totalOdds.toFixed(2) }}</span>
+      </div>
+
+      <div class="slip-stake">
+        <label for="stake">Miză ($)</label>
+        <input
+          id="stake"
+          type="number"
+          min="0"
+          step="1"
+          inputmode="decimal"
+          [(ngModel)]="stake"
+          (ngModelChange)="onStakeChange()"
+          (keydown)="$event.key === '-' || $event.key === 'e' || $event.key === '+' ? $event.preventDefault() : null"
+          placeholder="0">
+      </div>
+
+      <div class="slip-line slip-payout">
+        <span>Câștig potențial</span>
+        <span>{{ potentialPayout.toFixed(2) }} $</span>
+      </div>
+
+      <button
+        class="slip-place"
+        [disabled]="!stake || stake <= 0 || placing"
+        (click)="placeBet()">
+        {{ placing ? 'Se plasează...' : 'Plasează biletul' }}
+      </button>
+
+      <div class="slip-msg slip-error" *ngIf="errorMsg">{{ errorMsg }}</div>
+      <div class="slip-msg slip-success" *ngIf="successMsg">{{ successMsg }}</div>
+
+      <button class="slip-clear" (click)="clearAll()">Șterge biletul</button>
+    </div>
+  </div>
+
+  <!-- ============ TAB: BILETE ACTIVE (pending placed bets) ============ -->
+  <div *ngIf="activeTab === 'activ'">
+    <div *ngIf="loadingBets" class="slip-empty">Se încarcă...</div>
+    <div *ngIf="!loadingBets && activeBets.length === 0" class="slip-empty">
+      Niciun bilet activ.
+    </div>
+
+    <div class="bet-card" *ngFor="let bet of activeBets">
+      <div class="bet-card-head">
+        <span class="bet-status pending">În așteptare</span>
+        <span class="bet-date">{{ bet.createdAt | date:'dd/MM/yyyy HH:mm' }}</span>
+      </div>
+      <div class="bet-sel" *ngFor="let sel of bet.selections">
+        <span class="bet-sel-match">{{ sel.homeTeam }} vs {{ sel.awayTeam }}</span>
+        <span class="bet-sel-pick">{{ pickLabel(sel) }} <b>{{ sel.odd.toFixed(2) }}</b></span>
+      </div>
+      <div class="bet-card-foot">
+        <span>Miză: {{ bet.stake.toFixed(2) }} $</span>
+        <span>Cotă: {{ bet.totalOdds.toFixed(2) }}</span>
+        <span>Posibil: {{ bet.potentialPayout.toFixed(2) }} $</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ TAB: ISTORIC (settled bets) ============ -->
+  <div *ngIf="activeTab === 'istoric'">
+    <div *ngIf="loadingBets" class="slip-empty">Se încarcă...</div>
+    <div *ngIf="!loadingBets && settledBets.length === 0" class="slip-empty">
+      Niciun bilet în istoric.
+    </div>
+
+    <div class="bet-card" *ngFor="let bet of settledBets">
+      <div class="bet-card-head">
+        <span class="bet-status" [class.won]="bet.status === 'Won'" [class.lost]="bet.status === 'Lost'">
+          {{ resultLabel(bet.status) }}
+        </span>
+        <span class="bet-date">{{ bet.settledAt | date:'dd/MM/yyyy HH:mm' }}</span>
+      </div>
+      <div class="bet-sel" *ngFor="let sel of bet.selections">
+        <span class="bet-sel-match">{{ sel.homeTeam }} vs {{ sel.awayTeam }}</span>
+        <span class="bet-sel-pick">{{ pickLabel(sel) }} <b>{{ sel.odd.toFixed(2) }}</b></span>
+      </div>
+      <div class="bet-card-foot">
+        <span>Miză: {{ bet.stake.toFixed(2) }} $</span>
+        <span>Cotă: {{ bet.totalOdds.toFixed(2) }}</span>
+        <span [class.payout-won]="bet.status === 'Won'">
+          {{ bet.status === 'Won' ? ('Câștig: ' + bet.potentialPayout.toFixed(2) + ' $') : 'Pierdut' }}
+        </span>
+      </div>
+    </div>
+  </div>
+</div>

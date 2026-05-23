@@ -42,15 +42,15 @@
           <span class="team away">{{ match.awayTeam }}</span>
         </div>
         <div class="match-odds">
-          <div class="odd-box">
+          <div class="odd-box" [class.selected]="isSelected(match, '1')" (click)="addToSlip(match, '1')">
             <span class="odd-label">1</span>
             <span class="odd-value">{{ match.homeOdds ? match.homeOdds.toFixed(2) : '-' }}</span>
           </div>
-          <div class="odd-box">
+          <div class="odd-box" [class.selected]="isSelected(match, 'X')" (click)="addToSlip(match, 'X')">
             <span class="odd-label">X</span>
             <span class="odd-value">{{ match.drawOdds ? match.drawOdds.toFixed(2) : '-' }}</span>
           </div>
-          <div class="odd-box">
+          <div class="odd-box" [class.selected]="isSelected(match, '2')" (click)="addToSlip(match, '2')">
             <span class="odd-label">2</span>
             <span class="odd-value">{{ match.awayOdds ? match.awayOdds.toFixed(2) : '-' }}</span>
           </div>
@@ -74,15 +74,15 @@
           <span class="team away">{{ match.awayTeam }}</span>
         </div>
         <div class="match-odds">
-          <div class="odd-box">
+          <div class="odd-box" [class.selected]="isSelected(match, '1')" (click)="addToSlip(match, '1')">
             <span class="odd-label">1</span>
             <span class="odd-value">{{ match.homeOdds ? match.homeOdds.toFixed(2) : '-' }}</span>
           </div>
-          <div class="odd-box">
+          <div class="odd-box" [class.selected]="isSelected(match, 'X')" (click)="addToSlip(match, 'X')">
             <span class="odd-label">X</span>
             <span class="odd-value">{{ match.drawOdds ? match.drawOdds.toFixed(2) : '-' }}</span>
           </div>
-          <div class="odd-box">
+          <div class="odd-box" [class.selected]="isSelected(match, '2')" (click)="addToSlip(match, '2')">
             <span class="odd-label">2</span>
             <span class="odd-value">{{ match.awayOdds ? match.awayOdds.toFixed(2) : '-' }}</span>
           </div>
