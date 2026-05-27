@@ -13,7 +13,7 @@ namespace BettingApp.API.Controllers
         private readonly DataContext _context;
         private static readonly HttpClient _httpClient = new HttpClient();
         //intri pe https://the-odds-api.com si iti pui mail primesti key si pui aici intre ghilimele
-        private const string ApiKey = "";
+        private const string ApiKey = "9c276a6eef36217cd2f0e11c972f2dd6";
 
         public MatchesController(DataContext context)
         {

@@ -1,20 +1,97 @@
+.slip-container {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  font-family: inherit;
+}
+
+/* Collapsed Floating Button */
+.slip-collapsed-btn {
+  background: linear-gradient(135deg, var(--bg-panel), var(--bg-dark));
+  border: 1px solid var(--border-subtle);
+  border-radius: 30px;
+  padding: 12px 24px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  color: var(--text-main);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.05);
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.slip-container.has-selections .slip-collapsed-btn {
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+  border-color: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 30px rgba(155, 81, 224, 0.4);
+}
+
+.slip-collapsed-btn:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(155, 81, 224, 0.5);
+}
+
+.slip-collapsed-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.slip-count-badge {
+  background: rgba(0, 0, 0, 0.3);
+  color: white;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  font-weight: bold;
+}
+
+.slip-title {
+  font-weight: 600;
+  font-size: 1.05rem;
+}
+
+.slip-collapsed-odds {
+  font-weight: 700;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+}
+
+/* Expanded Slip Panel */
 .slip {
-  position: sticky;
-  top: 90px;
-  width: 320px;
-  flex-shrink: 0;
+  width: 350px;
   background: var(--bg-panel);
   border: 1px solid var(--border-subtle);
   border-radius: 16px;
   padding: 18px;
   color: var(--text-main);
-  font-family: inherit;
-  max-height: calc(100vh - 110px);
   display: flex;
   flex-direction: column;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  animation: slideUpFade 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  transform-origin: bottom right;
 }
 
-.slip-header {
+@keyframes slideUpFade {
+  from { opacity: 0; transform: translateY(20px) scale(0.95); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.slip-expanded-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -23,14 +100,68 @@
   margin-bottom: 14px;
   padding-bottom: 12px;
   border-bottom: 1px solid var(--border-subtle);
+  cursor: pointer;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: color 0.2s;
+  padding: 4px;
+}
+
+.close-btn:hover { color: white; }
+
+.slip-tabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 16px;
+}
+
+.slip-tab {
+  flex: 1;
+  padding: 8px 4px;
+  border: none;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.04);
+  color: #aaa;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.slip-tab:hover { color: #fff; }
+
+.slip-tab.active {
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+  color: #fff;
 }
 
 .slip-count {
-  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+  background: rgba(255,255,255,0.2);
   border-radius: 999px;
-  padding: 2px 10px;
-  font-size: 0.85rem;
+  padding: 2px 8px;
+  font-size: 0.8rem;
 }
+
+.slip-scroll-area {
+  max-height: 50vh;
+  overflow-y: auto;
+  padding-right: 4px;
+  display: flex;
+  flex-direction: column;
+}
+
+.slip-scroll-area::-webkit-scrollbar { width: 4px; }
+.slip-scroll-area::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 4px; }
 
 .slip-empty {
   color: var(--text-muted);
@@ -40,7 +171,6 @@
 }
 
 .slip-selections {
-  overflow-y: auto;
   flex-grow: 1;
 }
 
@@ -49,7 +179,7 @@
   justify-content: space-between;
   align-items: flex-start;
   gap: 10px;
-  padding: 10px 0;
+  padding: 12px 0;
   border-bottom: 1px solid var(--border-subtle);
 }
 
@@ -114,7 +244,6 @@
   font-size: 0.95rem;
 }
 
-/* kill the number-input spinners for a cleaner look */
 .slip-stake input::-webkit-outer-spin-button,
 .slip-stake input::-webkit-inner-spin-button {
   -webkit-appearance: none;
@@ -138,10 +267,17 @@
   font-weight: 600;
   font-size: 1rem;
   cursor: pointer;
+  box-shadow: 0 4px 15px rgba(155, 81, 224, 0.3);
+  transition: all 0.2s;
+}
+.slip-place:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(155, 81, 224, 0.5);
 }
 .slip-place:disabled {
   opacity: 0.4;
   cursor: not-allowed;
+  box-shadow: none;
 }
 
 .slip-clear {
@@ -154,40 +290,9 @@
   border-radius: 10px;
   cursor: pointer;
   font-family: inherit;
+  transition: all 0.2s;
 }
 .slip-clear:hover { color: #ff4d4f; border-color: #ff4d4f; }
-
-.slip-tabs {
-  display: flex;
-  gap: 4px;
-  margin-bottom: 16px;
-}
-
-.slip-tab {
-  flex: 1;
-  padding: 8px 4px;
-  border: none;
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.04);
-  color: #aaa;
-  font-size: 0.8rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.15s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-}
-
-.slip-tab:hover {
-  color: #fff;
-}
-
-.slip-tab.active {
-  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
-  color: #fff;
-}
 
 .bet-card {
   background: rgba(255, 255, 255, 0.03);

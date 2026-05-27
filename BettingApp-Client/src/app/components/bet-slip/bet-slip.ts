@@ -25,6 +25,7 @@ export class BetSlipComponent implements OnInit, OnDestroy {
   activeTab: 'bilet' | 'activ' | 'istoric' = 'bilet';
   allBets: BetHistoryItem[] = [];
   loadingBets = false;
+  isExpanded = false;
 
   private subs: Subscription[] = [];
 
@@ -38,6 +39,10 @@ export class BetSlipComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.subs.push(
       this.betSlip.selections$.subscribe(sel => {
+        // If a new selection was added, auto-expand the bet slip
+        if (sel.length > this.selections.length) {
+          this.isExpanded = true;
+        }
         this.selections = sel;
         this.cdr.detectChanges();
       })
@@ -61,6 +66,11 @@ export class BetSlipComponent implements OnInit, OnDestroy {
   clearAll(): void {
     this.stake = null;
     this.betSlip.clear();
+    this.isExpanded = false; // Auto collapse when cleared
+  }
+
+  toggleExpand(): void {
+    this.isExpanded = !this.isExpanded;
   }
 
   get totalOdds(): number {
