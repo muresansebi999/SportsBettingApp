@@ -32,6 +32,9 @@ export class HotbarComponent implements OnInit, OnDestroy {
   showProfileModal: boolean = false;
   showProfileMenu: boolean = false;
   
+  showDeleteModal: boolean = false;
+  deletePassword: string = '';
+
   showToast: boolean = false;
   toastMessage: string = '';
 
@@ -47,17 +50,13 @@ export class HotbarComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.loadUserInfo();
-
-    // Listen for login/logout/update events to refresh data without polling
     this.authSub = this.hotbarService.onLoginSuccess.subscribe(() => {
       this.loadUserInfo();
     });
   }
 
   ngOnDestroy(): void {
-    if (this.authSub) {
-      this.authSub.unsubscribe();
-    }
+    if (this.authSub) this.authSub.unsubscribe();
   }
 
   loadUserInfo() {
@@ -84,6 +83,7 @@ export class HotbarComponent implements OnInit, OnDestroy {
     this.showTransactionModal = true;
     this.showProfileModal = false;
     this.showProfileMenu = false; 
+    this.showDeleteModal = false;
   }
   closeTransactionModal() { this.showTransactionModal = false; }
 
@@ -91,6 +91,7 @@ export class HotbarComponent implements OnInit, OnDestroy {
     this.showProfileModal = true;
     this.showTransactionModal = false;
     this.showProfileMenu = false; 
+    this.showDeleteModal = false;
     
     this.isEditingUsername = false;
     this.isEditingEmail = false;
@@ -98,6 +99,15 @@ export class HotbarComponent implements OnInit, OnDestroy {
     this.editEmail = this.email;
   }
   closeProfileModal() { this.showProfileModal = false; }
+
+  openDeleteModal() {
+    this.showDeleteModal = true;
+    this.showProfileMenu = false;
+    this.showTransactionModal = false;
+    this.showProfileModal = false;
+    this.deletePassword = ''; 
+  }
+  closeDeleteModal() { this.showDeleteModal = false; }
 
   toggleProfileMenu() { this.showProfileMenu = !this.showProfileMenu; }
 
@@ -109,13 +119,10 @@ export class HotbarComponent implements OnInit, OnDestroy {
 
   saveProfileChanges() {
     if(!this.isEditingUsername && !this.isEditingEmail) {
-      this.closeProfileModal();
-      return;
+      this.closeProfileModal(); return;
     }
-
     if(!this.editUsername || !this.editEmail) {
-      alert("Câmpurile nu pot fi goale!");
-      return;
+      alert("Câmpurile nu pot fi goale!"); return;
     }
 
     this.hotbarService.updateProfile(this.username, this.editUsername, this.editEmail).subscribe({
@@ -127,34 +134,43 @@ export class HotbarComponent implements OnInit, OnDestroy {
           userObj.email = response.newEmail;
           localStorage.setItem('user', JSON.stringify(userObj));
         }
-
         this.username = response.newUsername;
         this.email = response.newEmail;
-        this.email = response.newEmail;
-
         this.closeProfileModal();
-        
-        setTimeout(() => {
-          this.displaySuccessToast(`Profilul a fost actualizat cu succes!`);
-        }, 150);
+        setTimeout(() => { this.displaySuccessToast(`Profilul a fost actualizat cu succes!`); }, 150);
       },
       error: (err: any) => {
-        console.error("Eroare Detaliată:", err); // Afisam si in consola F12
-
-        // Extragem eroare EXACTĂ pentru a vedea de ce crapă
-        let errorMsg = 'Eroare de rețea. Te rog verifică dacă C# (backend-ul) rulează.';
-        
-        if (err.status === 409) {
-          errorMsg = 'Acest username este deja luat!';
-        } else if (err.error && err.error.message) {
-          errorMsg = err.error.message;
-        } else if (err.error && typeof err.error === 'string') {
-          errorMsg = err.error;
-        } else if (err.message) {
-          errorMsg = err.message;
-        }
-
+        let errorMsg = 'Eroare de rețea.';
+        if (err.status === 409) errorMsg = 'Acest username este deja luat!';
+        else if (err.error && typeof err.error === 'string') errorMsg = err.error;
         alert(`Eroare:\n${errorMsg}`);
+      }
+    });
+  }
+
+  confirmDeleteAccount() {
+    if (!this.deletePassword) {
+      alert('Te rog introdu parola pentru a continua.');
+      return;
+    }
+
+    this.hotbarService.login({ username: this.username, password: this.deletePassword }).subscribe({
+      next: () => {
+        this.hotbarService.deleteAccount(this.username).subscribe({
+          next: () => {
+            this.closeDeleteModal();
+            // FĂRĂ ALERT - DOAR LOGOUT SILENȚIOS
+            this.onLogout(); 
+          },
+          error: (err: any) => {
+            console.error("EROARE DELETE:", err);
+            let msg = err.error?.message || err.message || "Eroare necunoscută";
+            alert(`A apărut o eroare la ștergere!\n\nCod Eroare: ${err.status}\nDetalii: ${msg}\n\nDacă ai codul 404, trebuie să dai RESTART la serverul C#!`);
+          }
+        });
+      },
+      error: () => {
+        alert('Parola introdusă este incorectă!');
       }
     });
   }
@@ -171,10 +187,8 @@ export class HotbarComponent implements OnInit, OnDestroy {
 
   confirmTransaction(amount?: number) {
     const finalAmount = amount !== undefined ? amount : this.customAmount;
-    
     if (!finalAmount || finalAmount <= 0) {
-      alert('Te rugăm să introduci o sumă validă mai mare de 0.');
-      return;
+      alert('Te rugăm să introduci o sumă validă mai mare de 0.'); return;
     }
 
     if (this.transactionType === 'Deposit') {
@@ -182,9 +196,7 @@ export class HotbarComponent implements OnInit, OnDestroy {
         next: (response: any) => {
           this.updateBalance(response.newBalance || response.NewBalance);
           this.closeTransactionModal(); 
-          setTimeout(() => {
-            this.displaySuccessToast(`Depunere de $${finalAmount} realizată cu succes!`);
-          }, 150);
+          setTimeout(() => { this.displaySuccessToast(`Depunere de $${finalAmount} realizată cu succes!`); }, 150);
         },
         error: (err: any) => alert('A apărut o eroare la depunere.')
       });
@@ -193,16 +205,11 @@ export class HotbarComponent implements OnInit, OnDestroy {
         next: (response: any) => {
           this.updateBalance(response.newBalance || response.NewBalance);
           this.closeTransactionModal(); 
-          setTimeout(() => {
-            this.displaySuccessToast(`Retragere de $${finalAmount} realizată cu succes!`);
-          }, 150);
+          setTimeout(() => { this.displaySuccessToast(`Retragere de $${finalAmount} realizată cu succes!`); }, 150);
         },
         error: (err: any) => {
-          if (err.status === 400 && err.error) {
-            alert(err.error);
-          } else {
-            alert('A apărut o eroare la retragere.');
-          }
+          if (err.status === 400 && err.error) alert(err.error);
+          else alert('A apărut o eroare la retragere.');
         }
       });
     }
@@ -224,14 +231,10 @@ export class HotbarComponent implements OnInit, OnDestroy {
       next: (res) => {
         this.isUpdating = false;
         this.displaySuccessToast(res.message || 'Matches updated successfully!');
-        // optionally reload page or emit event to matches component
-        setTimeout(() => {
-          window.location.reload();
-        }, 1500);
+        setTimeout(() => { window.location.reload(); }, 1500);
       },
       error: (err) => {
         this.isUpdating = false;
-        console.error(err);
         alert('Eroare la actualizarea meciurilor din API.');
       }
     });

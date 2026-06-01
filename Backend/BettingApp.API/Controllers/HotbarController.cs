@@ -77,7 +77,6 @@ namespace BettingApp.API.Controllers
             return Ok(new { message = "Retragere cu succes", newBalance = user.Balance });
         }
 
-        // NOU: Am schimbat în HttpPost ca să nu mai fie blocat de browser
         [HttpPost("update")]
         public async Task<IActionResult> UpdateProfile([FromBody] UpdateProfileRequest request)
         {
@@ -105,8 +104,26 @@ namespace BettingApp.API.Controllers
             }
             catch (Exception ex)
             {
-                // Prindem eroarea exacta de la baza de date
                 return StatusCode(500, new { message = $"Eroare Server: {ex.Message}" });
+            }
+        }
+
+        [HttpPost("delete/{username}")]
+        public async Task<IActionResult> DeleteAccount(string username)
+        {
+            try 
+            {
+                var user = await _context.Users.FirstOrDefaultAsync(u => u.Username.ToLower() == username.ToLower());
+                if (user == null) return NotFound("Userul nu a fost găsit.");
+
+                _context.Users.Remove(user);
+                await _context.SaveChangesAsync();
+
+                return Ok(new { message = "Contul a fost șters definitiv." });
+            } 
+            catch (Exception ex) 
+            {
+                return StatusCode(500, new { message = $"Nu putem șterge contul. Probabil are date asociate în istoric (pariuri/tranzacții). Detalii tehnice: {ex.InnerException?.Message ?? ex.Message}" });
             }
         }
     }

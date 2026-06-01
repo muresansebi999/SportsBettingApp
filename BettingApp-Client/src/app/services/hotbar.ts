@@ -39,13 +39,16 @@ export class HotbarService {
     return this.http.post(`${this.apiUrl}/withdraw`, { username: username, amount: amount });
   }
 
-  // NOU: Am schimbat în this.http.post pentru a potrivi cu C#
   updateProfile(oldUsername: string, newUsername: string, email: string): Observable<any> {
     return this.http.post(`${this.apiUrl}/update`, {
       oldUsername: oldUsername,
       newUsername: newUsername,
       email: email
     });
+  }
+
+  deleteAccount(username: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/delete/${username}`, {});
   }
 
   login(model: any): Observable<any> {
@@ -69,4 +72,4 @@ export class HotbarService {
     const userString = localStorage.getItem('user');
     return userString ? JSON.parse(userString) : null;
   }
-}
+} 
