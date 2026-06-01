@@ -14,6 +14,7 @@
       <div class="profile-menu" *ngIf="showProfileMenu">
         <div class="menu-header">Salut, {{ username || 'User' }}</div>
         <button class="profile-btn" (click)="openProfileModal()">Profil</button>
+        <button class="delete-menu-btn" (click)="openDeleteModal()">Șterge Cont</button>
         <button class="logout-btn" (click)="onLogout()">Log Out</button>
       </div>
     </div>
@@ -55,7 +56,6 @@
     </div>
     
     <div class="profile-details-list">
-      
       <div class="detail-row">
         <span>Nume:</span> <strong>{{ lastName }}</strong>
       </div>
@@ -66,7 +66,6 @@
         <span>Data Nașterii:</span> <strong>{{ dateOfBirth }}</strong>
       </div>
 
-      <!-- Secțiune Username FĂRĂ CREION -->
       <div class="edit-group">
         <div class="detail-col">
           <span>Username:</span>
@@ -79,7 +78,6 @@
         <small class="helper-text outside" *ngIf="isEditingUsername">Introdu noul username.</small>
       </div>
 
-      <!-- Secțiune Email FĂRĂ CREION -->
       <div class="edit-group">
         <div class="detail-col">
           <span>Email:</span>
@@ -97,7 +95,31 @@
       </div>
 
       <button class="btn-save-profile" (click)="saveProfileChanges()">Salvează Modificările</button>
-      
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" *ngIf="showDeleteModal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2 style="color: #7A1B88;">Ștergere Definitivă Cont</h2>
+      <button class="close-btn" (click)="closeDeleteModal()">✕</button>
+    </div>
+    
+    <p class="modal-text" style="color: #ccc;">
+      Atenție! Această acțiune este <strong>ireversibilă</strong> și toate datele tale (inclusiv balanța de {{ balance | currency:'USD':'symbol' }}) se vor pierde.
+    </p>
+    <p class="modal-text" style="margin-bottom: 15px;">
+      Pentru a confirma că tu ești cel care face această acțiune, te rugăm să îți introduci parola:
+    </p>
+
+    <div class="detail-col" style="margin-bottom: 10px;">
+      <input type="password" class="custom-input" [(ngModel)]="deletePassword" placeholder="Parola ta">
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn-cancel" (click)="closeDeleteModal()">Anulează</button>
+      <button class="btn-confirm-delete" (click)="confirmDeleteAccount()">Șterge Contul</button>
     </div>
   </div>
 </div>
