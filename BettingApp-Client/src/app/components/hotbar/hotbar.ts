@@ -229,9 +229,19 @@ export class HotbarComponent implements OnInit, OnDestroy {
     this.isUpdating = true;
     this.matchService.updateFromApi().subscribe({
       next: (res) => {
-        this.isUpdating = false;
-        this.displaySuccessToast(res.message || 'Matches updated successfully!');
-        setTimeout(() => { window.location.reload(); }, 1500);
+        // După ce aducem meciurile noi, decontăm automat biletele (Settle Bets)
+        this.matchService.settleBets().subscribe({
+          next: (settleRes) => {
+            this.isUpdating = false;
+            this.displaySuccessToast(res.message || 'Date actualizate și bilete decontate!');
+            setTimeout(() => { window.location.reload(); }, 1500);
+          },
+          error: (err) => {
+            this.isUpdating = false;
+            this.displaySuccessToast(res.message || 'Meciuri actualizate, dar decontarea a eșuat.');
+            setTimeout(() => { window.location.reload(); }, 1500);
+          }
+        });
       },
       error: (err) => {
         this.isUpdating = false;

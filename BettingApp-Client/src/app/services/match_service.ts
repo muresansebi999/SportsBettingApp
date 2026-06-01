@@ -22,4 +22,8 @@ export class MatchService {
   updateFromApi(): Observable<any> {
     return this.http.post(`${this.apiUrl}/update`, {});
   }
+
+  settleBets(): Observable<any> {
+    return this.http.post(`http://localhost:5257/api/bets/settle`, {});
+  }
 }
