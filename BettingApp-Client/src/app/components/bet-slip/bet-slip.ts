@@ -5,6 +5,7 @@ import { Subscription } from 'rxjs';
 import { BetSlipService, BetSelection } from '../../services/bet_slip_service';
 import { HotbarService } from '../../services/hotbar';
 import { BetHistoryService, BetHistoryItem } from '../../services/bet_history_service';
+import { MatchService } from '../../services/match_service';
 
 @Component({
   selector: 'app-bet-slip',
@@ -33,6 +34,7 @@ export class BetSlipComponent implements OnInit, OnDestroy {
     private betSlip: BetSlipService,
     private hotbar: HotbarService,
     private betHistory: BetHistoryService,
+    private matchService: MatchService,
     private cdr: ChangeDetectorRef
   ) {}
 
@@ -92,10 +94,17 @@ export class BetSlipComponent implements OnInit, OnDestroy {
 
   setTab(tab: 'bilet' | 'activ' | 'istoric'): void {
     this.activeTab = tab;
-    // Re-fetch when entering a bet-list tab, so settlement done via Swagger
-    // shows up without a page reload.
     if (tab === 'activ' || tab === 'istoric') {
-      this.loadBets();
+      // Auto-settle first so statuses are always up-to-date, then load
+      this.loadingBets = true;
+      this.matchService.settleBets().subscribe({
+        next: () => {
+          this.loadBets();
+          // Refresh balance in case a bet was just won
+          this.hotbar.onLoginSuccess.next();
+        },
+        error: () => this.loadBets() // If settle fails, still load bets
+      });
     }
   }
 
@@ -133,7 +142,7 @@ export class BetSlipComponent implements OnInit, OnDestroy {
     if (sel.outcome === '2') return sel.awayTeam;
     return 'Egal';
   }
-
+  
   placeBet(): void {
     this.errorMsg = null;
     this.successMsg = null;

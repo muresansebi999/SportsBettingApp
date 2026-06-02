@@ -54,7 +54,7 @@
         </div>
 
         <div class="slip-stake">
-          <label for="stake">Miză ($)</label>
+          <label for="stake">Miză (RON)</label>
           <input
             id="stake"
             type="number"
@@ -69,7 +69,7 @@
 
         <div class="slip-line slip-payout">
           <span>Câștig potențial</span>
-          <span>{{ potentialPayout.toFixed(2) }} $</span>
+          <span>{{ potentialPayout.toFixed(2) }} RON</span>
         </div>
 
         <button
@@ -103,9 +103,9 @@
           <span class="bet-sel-pick">{{ pickLabel(sel) }} <b>{{ sel.odd.toFixed(2) }}</b></span>
         </div>
         <div class="bet-card-foot">
-          <span>Miză: {{ bet.stake.toFixed(2) }} $</span>
+          <span>Miză: {{ bet.stake.toFixed(2) }} RON</span>
           <span>Cotă: {{ bet.totalOdds.toFixed(2) }}</span>
-          <span>Posibil: {{ bet.potentialPayout.toFixed(2) }} $</span>
+          <span>Posibil: {{ bet.potentialPayout.toFixed(2) }} RON</span>
         </div>
       </div>
     </div>
@@ -129,10 +129,10 @@
           <span class="bet-sel-pick">{{ pickLabel(sel) }} <b>{{ sel.odd.toFixed(2) }}</b></span>
         </div>
         <div class="bet-card-foot">
-          <span>Miză: {{ bet.stake.toFixed(2) }} $</span>
+          <span>Miză: {{ bet.stake.toFixed(2) }} RON</span>
           <span>Cotă: {{ bet.totalOdds.toFixed(2) }}</span>
           <span [class.payout-won]="bet.status === 'Won'">
-            {{ bet.status === 'Won' ? ('Câștig: ' + bet.potentialPayout.toFixed(2) + ' $') : 'Pierdut' }}
+            {{ bet.status === 'Won' ? ('Câștig: ' + bet.potentialPayout.toFixed(2) + ' RON') : 'Pierdut' }}
           </span>
         </div>
       </div>

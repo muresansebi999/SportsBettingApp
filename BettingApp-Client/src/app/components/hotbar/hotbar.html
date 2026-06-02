@@ -1,9 +1,9 @@
 <div class="hotbar-container">
   <div class="logo">Pisicile Sălbatice</div>
   <div class="user-actions">
-    <div class="balance">{{ balance | currency:'USD':'symbol' }}</div>
+    <div class="balance">{{ balance }} RON</div>
     <button class="btn-update" (click)="updateFromApi()" [disabled]="isUpdating">
-      {{ isUpdating ? 'Updating...' : 'Update' }}
+      {{ isUpdating ? 'Se Actualizează...' : 'Actualizare' }}
     </button>
     <button class="btn-deposit" (click)="openTransactionModal('Deposit')">Depunere</button>
     <button class="btn-withdraw" (click)="openTransactionModal('Withdraw')">Retragere</button>
@@ -12,10 +12,10 @@
         {{ username ? username.charAt(0).toUpperCase() : 'U' }}
       </div>
       <div class="profile-menu" *ngIf="showProfileMenu">
-        <div class="menu-header">Salut, {{ username || 'User' }}</div>
+        <div class="menu-header">Salut, <strong>{{ username || 'User' }}</strong></div>
         <button class="profile-btn" (click)="openProfileModal()">Profil</button>
         <button class="delete-menu-btn" (click)="openDeleteModal()">Șterge Cont</button>
-        <button class="logout-btn" (click)="onLogout()">Log Out</button>
+        <button class="logout-btn" (click)="onLogout()">Deconectare</button>
       </div>
     </div>
   </div>
@@ -29,19 +29,19 @@
     </div>
     <p class="modal-text">Selectează suma pe care dorești să o {{ transactionType === 'Deposit' ? 'adaugi în' : 'retragi din' }} cont:</p>
     <div class="amount-grid">
-      <button class="amount-btn" (click)="confirmTransaction(10)">$10</button>
-      <button class="amount-btn" (click)="confirmTransaction(25)">$25</button>
-      <button class="amount-btn" (click)="confirmTransaction(100)">$100</button>
-      <button class="amount-btn" (click)="confirmTransaction(200)">$200</button>
-      <button class="amount-btn" (click)="confirmTransaction(500)">$500</button>
-      <button class="amount-btn" (click)="confirmTransaction(1000)">$1000</button>
+      <button class="amount-btn" (click)="confirmTransaction(10)">10 RON</button>
+      <button class="amount-btn" (click)="confirmTransaction(25)">25 RON</button>
+      <button class="amount-btn" (click)="confirmTransaction(100)">100 RON</button>
+      <button class="amount-btn" (click)="confirmTransaction(200)">200 RON</button>
+      <button class="amount-btn" (click)="confirmTransaction(500)">500 RON</button>
+      <button class="amount-btn" (click)="confirmTransaction(1000)">1000 RON</button>
     </div>
     
     <div class="custom-amount-section">
-      <p class="modal-text" style="margin-top: 20px; margin-bottom: 10px;">Sau introdu o sumă personalizată:</p>
+      <p class="modal-text" style="margin-top: 0; margin-bottom: 15px;">Sau introdu suma dorită:</p>
       <div class="custom-amount-input-group">
-        <span class="currency-symbol">$</span>
-        <input type="number" [(ngModel)]="customAmount" class="custom-input custom-amount-input" placeholder="Ex: 55" min="1">
+        <span class="currency-symbol">RON</span>
+        <input type="number" [(ngModel)]="customAmount" class="custom-input" placeholder="Ex: 55" min="1">
         <button class="btn-confirm-custom" (click)="confirmTransaction()">Confirmă</button>
       </div>
     </div>
@@ -73,7 +73,7 @@
           <input *ngIf="isEditingUsername" type="text" class="custom-input" [(ngModel)]="editUsername">
         </div>
         <small class="helper-text clickable" *ngIf="!isEditingUsername" (click)="isEditingUsername = true">
-          Apasă aici pentru a schimba username-ul
+          Editează username
         </small>
         <small class="helper-text outside" *ngIf="isEditingUsername">Introdu noul username.</small>
       </div>
@@ -85,13 +85,13 @@
           <input *ngIf="isEditingEmail" type="email" class="custom-input" [(ngModel)]="editEmail">
         </div>
         <small class="helper-text clickable" *ngIf="!isEditingEmail" (click)="isEditingEmail = true">
-          Apasă aici pentru a schimba email-ul
+          Editează email
         </small>
         <small class="helper-text outside" *ngIf="isEditingEmail">Introdu noua adresă de mail.</small>
       </div>
 
       <div class="detail-row balance-row">
-        <span>Balanță:</span> <strong>{{ balance | currency:'USD':'symbol' }}</strong>
+        <span>Balanță:</span> <strong>{{ balance }} RON</strong>
       </div>
 
       <button class="btn-save-profile" (click)="saveProfileChanges()">Salvează Modificările</button>
@@ -102,19 +102,19 @@
 <div class="modal-overlay" *ngIf="showDeleteModal">
   <div class="modal-content">
     <div class="modal-header">
-      <h2 style="color: #7A1B88;">Ștergere Definitivă Cont</h2>
+      <h2 style="background: none; -webkit-text-fill-color: #f87171; color: #f87171;">Ștergere Definitivă Cont</h2>
       <button class="close-btn" (click)="closeDeleteModal()">✕</button>
     </div>
     
-    <p class="modal-text" style="color: #ccc;">
-      Atenție! Această acțiune este <strong>ireversibilă</strong> și toate datele tale (inclusiv balanța de {{ balance | currency:'USD':'symbol' }}) se vor pierde.
+    <p class="modal-text">
+      Atenție! Această acțiune este <strong>ireversibilă</strong> și toate datele tale (inclusiv balanța de <strong>{{ balance }} RON</strong>) se vor pierde definitiv.
     </p>
-    <p class="modal-text" style="margin-bottom: 15px;">
-      Pentru a confirma că tu ești cel care face această acțiune, te rugăm să îți introduci parola:
+    <p class="modal-text" style="margin-bottom: 20px;">
+      Confirmă identitatea introducând parola:
     </p>
 
-    <div class="detail-col" style="margin-bottom: 10px;">
-      <input type="password" class="custom-input" [(ngModel)]="deletePassword" placeholder="Parola ta">
+    <div class="detail-col" style="margin-bottom: 15px;">
+      <input type="password" class="custom-input" style="width: 100%" [(ngModel)]="deletePassword" placeholder="Introdu parola ta">
     </div>
 
     <div class="modal-actions">
@@ -125,5 +125,9 @@
 </div>
 
 <div class="toast-notification" [class.show]="showToast">
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+    <polyline points="22 4 12 14.01 9 11.01"></polyline>
+  </svg>
   {{ toastMessage }}
 </div>
